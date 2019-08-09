@@ -1,0 +1,24 @@
+{
+  "name": "matcha",
+  "version": "1.0.0",
+  "description": "This project is about creating a dating website.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ifarahi/matcha.git"
+  },
+  "author": "ifarahi && ysalahed",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ifarahi/matcha/issues"
+  },
+  "homepage": "https://github.com/ifarahi/matcha#readme",
+  "dependencies": {
+    "config": "^3.2.2",
+    "express": "^4.17.1",
+    "mysql": "^2.17.1"
+  }
+}
