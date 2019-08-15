@@ -1,8 +1,13 @@
+const   express = require('express');
+const   app     = express();
+
+
 module.exports = {
-    userRegistration: function (req, res) {
+    register: (req, res) => {
         res.send('working');
     },
-    userLogin: function () {
+
+    login: function () {
 
     }
 }
