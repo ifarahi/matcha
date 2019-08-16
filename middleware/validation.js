@@ -6,7 +6,7 @@
 
 module.exports = {
     register: (req, res, next) => {
-        const   { firstname, lastname, username, email, password } = req.body; // using objects destructuring to extract only needed informations from the request body
+        const   { firstname, lastname, username, email, password, gender } = req.body; // using objects destructuring to extract only needed informations from the request body
 
         function emailIsValid (email) { // using regex to check if its a valid email ex: emailname@domain.con
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
@@ -21,8 +21,10 @@ module.exports = {
             status: 400,
             message: ""
         }
-        if (firstname && lastname && username && email && password) {
+        if (firstname && lastname && username && gender && email && password) {
 
+            if (gender.trim().length < 4)
+                errorObject.message = "Invalid gender";
             if (firstname.trim().length < 6)
                 errorObject.message = "Invalid firstname";
             if (lastname.trim().length < 6)
