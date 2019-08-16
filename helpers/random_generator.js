@@ -10,8 +10,8 @@ module.exports = (length) => {
         var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         var charactersLength = characters.length;
         for ( var i = 0; i < length; i++ ) {
-           result += characters.charAt(Math.floor(Math.random() * charactersLength));
+           result += characters.charAt(Math.floor(Math.random() * charactersLength)); // generate 32 random  character
         }
-        resolve(new MD5().update(result).digest('hex'));
+        resolve(new MD5().update(result).digest('hex')); // hash the 32 character generated
     });
  }

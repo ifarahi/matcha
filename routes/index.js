@@ -4,7 +4,7 @@ const   Users = require('./Users');
 
 /*
 **** This is the router module wich is responsable to pass controll to the right router 
-**** ex : any request start with '/users' will be handled with the users router '/images' wiil be handled with images router
+**** ex : any request start with '/users' will be handled with the users, router '/images' will be handled with images router
 */
 
 router

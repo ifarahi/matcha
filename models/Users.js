@@ -26,7 +26,7 @@ module.exports = {
         });
     },
 
-    register: (data) => {
+    register: (data) => { // regitser a new user
         return new Promise((resolve, reject) => { 
             const   { firstname, lastname, username, gender, email, password, verify_email_hash } = data; // using objects destructuring to extract only needed informations from the request body 
             const   sql = 'INSERT INTO users (firstname, lastname, username, gender, email, password, verify_email_hash) VALUES (?, ?, ?, ?, ?, ?, ?)'; // prepare the statement using positional params '?'
@@ -34,6 +34,35 @@ module.exports = {
             database.query(sql, values, (error, result) => {
                 if (error) reject(error);
                 resolve(result);
+            });
+        });
+    },
+
+    checkEmailVerificationHash: (data) => { // check if the email_verification_hash is belong to the user with the represeting email
+        return new Promise((resolve, reject) => { 
+
+            database.query('SELECT count(*) as rows FROM users WHERE email = ? AND verify_email_hash = ?', [data.email, data.token], (error, result) => {
+                if (error) reject(error);
+                resolve(result[0].rows);
+            });
+        });
+    },
+
+    setAccountAsVerified: (email) => { // set the account with the given email as verified
+        return new Promise((resolve, reject) => { 
+
+            database.query('UPDATE users SET is_verified = 1 WHERE email = ?', email, (error, result) => {
+                if (error) reject(error);
+                resolve('Account has been verified');
+            });
+        });
+    },
+
+    fetchUserWithEmail: (email) => { // return a promise contain the user row
+        return new Promise((resolve, reject) => {
+            database.query('SELECT * FROM users WHERE email = ?', email, (error, result) => {
+                if (error) reject(error);
+                resolve(result[0]);
             });
         });
     }
