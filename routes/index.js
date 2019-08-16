@@ -2,7 +2,12 @@ const   express = require('express');
 const   router = express.Router();
 const   Users = require('./Users');
 
+/*
+**** This is the router module wich is responsable to pass controll to the right router 
+**** ex : any request start with '/users' will be handled with the users router '/images' wiil be handled with images router
+*/
+
 router
-    .use('/users', Users);
+    .use('/users', Users); // any reqeust contains '/users' will be handled by the user router 
 
 module.exports = router;
