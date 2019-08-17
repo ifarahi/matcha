@@ -1,9 +1,9 @@
 'use strict';
 const nodemailer = require('nodemailer');
 
-// async..await is not allowed in global scope, must use a wrapper
+
 module.exports = {
-    completeRegistarion: async (data) => {
+    completeRegistarion: async (data) => { // this method is responsable to only send complete registration message
 
         // create reusable transporter object using the default SMTP transport
         let transporter = nodemailer.createTransport({

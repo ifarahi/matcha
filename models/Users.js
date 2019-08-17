@@ -65,5 +65,14 @@ module.exports = {
                 resolve(result[0]);
             });
         });
+    },
+
+    fetchUserWithUsername: (username) => { // return a promise contain the user row
+        return new Promise((resolve, reject) => {
+            database.query('SELECT * FROM users WHERE username = ?', username, (error, result) => {
+                if (error) reject(error);
+                resolve(result[0]);
+            });
+        });
     }
 }

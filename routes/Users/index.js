@@ -11,6 +11,9 @@ const   validation = require('../../middleware/validation');
 router.use('/register', validation.register); // if the request is to register a new user the request body should be validate first by the register middlware
 router.post('/register', userController.register); // if the request reached this part thats mean validtion has been successfuly passed
 
+router.use('/login', validation.login); // if the request is to login the request body should be validate first by the login middlware
+router.post('/login', userController.login); // if the request reached this part thats mean validtion has been successfuly passed
+
 router.get('/completeRegistration/:email/:token', userController.completeRegistarion); // verifying user email
 
 module.exports = router;

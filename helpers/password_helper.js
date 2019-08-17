@@ -14,7 +14,7 @@ module.exports = {
 
     password_verify : (password, hashed_password) => { // take plaintext password and hashed password compare them and return either true or false
         return new Promise((resolve, reject) => {
-            bcrypt.compare(myPlaintextPassword, hash, function(err, res) {
+            bcrypt.compare(password, hashed_password, function(err, res) {
                 resolve(res);
             });
         });

@@ -4,13 +4,16 @@ const   userModel = require('../models/Users');
 const   password_helper = require('../helpers/password_helper');
 const   random = require('../helpers/random_generator');
 const   mail   = require('../helpers/mail_sender');
+const   _      = require('lodash');
+const   jwt    = require('jsonwebtoken');
+
 /*
 **** Users controller responsible for dealing with users part (register new user, login an existing user, update user information)
 **** interact witht the user model send and get informations
 */
 
 module.exports = {
-    register: async (req, res) => { // using async function to await the returned promise from userModel methods
+    register: async (req, res) => { // @register responsble to handle all registrations requests
         const   { firstname, lastname, username, gender, email, password } = req.body; // using objects destructuring to extract only needed informations from the request body
         const data = { // prepare the user data to be stored in the database (hash the password)
             firstname,
@@ -31,7 +34,7 @@ module.exports = {
             if (usernameResult) { // if username is already exists set up the response object and end the reqeust
                 responseObject.status = 409;
                 responseObject.message = "Username is already exists";
-                res.send(JSON.stringify(responseObject));
+                res.json(responseObject);
                 return;
             }
         } catch (error) {  // if the promise rejected end the request and send the error 
@@ -44,7 +47,7 @@ module.exports = {
             if (emailResult) { // if email is already exists set up the response object and end the reqeust
                 responseObject.status = 409;
                 responseObject.message = "email is already exists";
-                res.send(JSON.stringify(responseObject));
+                res.json(responseObject);
                 return;
             }
         } catch (error) { // if the promise rejected end the request and send the error 
@@ -57,7 +60,7 @@ module.exports = {
             responseObject.status = 200;
             responseObject.message = "user has been registred";
             mail.completeRegistarion(data); // send complete resgistration mail
-            res.send(JSON.stringify(responseObject));
+            res.json(responseObject);
         } catch (error) {  // if the promise rejected end the request and send the error 
             res.send(`somthing went wrong: ${error}`);
             return;
@@ -65,7 +68,7 @@ module.exports = {
 
     },
 
-    completeRegistarion: async (req, res) => {
+    completeRegistarion: async (req, res) => { // @login responsable for every email verification request
         const { email, token} = req.params; // extract the email and token from the req.params object
         const responseObject = { // the response object to be send back
             status: 0, // response status
@@ -81,26 +84,61 @@ module.exports = {
             if (emailResult < 1) { // check if the user is exist if not end the request and send the response object
                 responseObject.status =  400;
                 responseObject.message = "user not found";
-                res.send(JSON.stringify(responseObject));
+                res.json(responseObject);
                 return;
             }
             const tokenResult = await userModel.checkEmailVerificationHash(data); 
             if (tokenResult < 1) { // now check if the given token belong to that user if not end the request ans send the response object
                 responseObject.status =  400;
                 responseObject.message = "invalid token";
-                res.send(JSON.stringify(responseObject));
+                res.json(responseObject);
                 return;
             }
             //if the tow statements has been passed thats mean its a valid request now set the user account as verified
             const verificationMessage = await userModel.setAccountAsVerified(email); // await the promise wich contains validation message
             responseObject.status = 200; // set the status to seccessful http request
             responseObject.message = verificationMessage; // set the message
-            res.send(JSON.stringify(responseObject));
+            res.json(responseObject);
 
         } catch (error) {  // if the promise rejected end the request and send the error 
             res.send(`somthing went wrong: ${error}`);
             return;
         }
 
+    },
+
+    login: async (req, res) => { // @login responsable to login users and send back JWT for every successful login operation
+        const   {username , password} = req.body; // extract the username and the password from the request body
+        const   errorObject = { // init the error object wich will be returned as a response in case of error
+            status: 400,
+            message: ""
+        }
+
+        const userRow = await userModel.fetchUserWithUsername(username); // fetch the user row if its exist
+        if (!userRow) {// if the username not exists set the errorObject and end the request
+            errorObject.message = "Invalid username or password"; // the user should not know wich one is incorrect for security reasons
+            res.json(errorObject);
+            return
+        }
+
+        const isPasswordCurrect = await password_helper.password_verify(password, userRow.password); // comapre the entred password with the user password
+        if (!isPasswordCurrect) { // if the password is not currect set the errorObject and end the request
+            errorObject.message = "Invalid username or password"; // the user should not know wich one is incorrect for security reasons
+            res.json(errorObject);
+            return
+        }
+
+        if (!userRow.is_verified) { // if the username and password is currect check if the user account is verified if not set the 
+            errorObject.status = 406; // 406 http status code means the request is not acceptable although the username and passowrd is correct
+            errorObject.message = "Account is not verified";
+            res.json(errorObject);
+            return
+        }
+
+        const User = _.pick(userRow, ['id', 'username', 'firstname', 'lastname', 'email', 'longitude', 'latitude', 'is_first_visit']); //usng lodash to pick only needed informations
+        const token = jwt.sign(User, process.env.PRIVATE_KEY); // sign the user token with the private key
+        res.header('x-auth-token', token) // set the user token on the header
+            .json(User); // send the user row in the body
     }
+
 }

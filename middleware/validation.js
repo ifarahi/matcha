@@ -1,7 +1,8 @@
 
 /*
 *** This module exports all middlewares responsable for validating forms ***
-*** @register : This middleware is responsable for validate registration forms 
+*** @register : This middleware is responsable for validating registration forms 
+*** @login : This middleware is responsable for validating login forms
 */
 
 module.exports = {
@@ -12,7 +13,7 @@ module.exports = {
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
         }
 
-        function stongPassword(password) { // using regex to check if the password is strong enough : at least 8 characters one capital latter and one special character
+        function strongPassword(password) { // using regex to check if the password is strong enough : at least 8 characters one capital latter and one special character
             var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
             return strongRegex.test(password);
         }
@@ -33,18 +34,50 @@ module.exports = {
                 errorObject.message = "Invalid username";
             if(!emailIsValid(email))
                 errorObject.message = "Invalid email";
-            if(!stongPassword(password))
+            if(!strongPassword(password))
                 errorObject.message = "Please enter a strong password";
             
             if (!errorObject.message) // if error message is empty thats mean all test has been passed with no error so pass controll to the next middlware 
                 next();
             else // end up the request and send back the error object
-                res.send(JSON.stringify(errorObject));
+                res.json(errorObject);
 
+        } else {
+            res.json({
+                status: 400,
+                message: "all informations is required"
+            });
         }
-        else res.send(JSON.stringify({
+    },
+
+    login: (req, res, next) => {
+        const   {username , password} = req.body; // extract the username and the password from the request body
+        const   errorObject = { // init the error object wich will be returned as a response in case of error
             status: 400,
-            message: "all informations is required"
-        }));
+            message: ""
+        }
+
+        function strongPassword(password) { // using regex to check if the password is strong enough : at least 8 characters one capital latter and one special character
+            var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+            return strongRegex.test(password);
+        }
+
+        if (username && password) { // both the username and the password should be present
+            if (username.trim().length < 6)
+                errorObject.message = "Invalid username";
+            if (!strongPassword(password))
+                errorObject.message = "Please enter a strong password";
+            
+            if (!errorObject.message) // if error message is empty thats mean all test has been passed with no error so pass controll to the next middlware 
+                next();
+            else // end up the request and send back the error object
+                res.json(errorObject);
+
+        } else {
+            res.json({
+                status: 400,
+                message: "all informations is required"
+            });
+        }
     }
 }
