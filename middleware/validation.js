@@ -3,6 +3,7 @@
 *** This module exports all middlewares responsable for validating forms ***
 *** @register : This middleware is responsable for validating registration forms 
 *** @login : This middleware is responsable for validating login forms
+*** @forgetPassword : validate if the email is a valid email
 */
 
 module.exports = {
@@ -79,5 +80,18 @@ module.exports = {
                 message: "all informations is required"
             });
         }
+    },
+
+    forgetPassword: (req, res, next) => {
+        const email = req.params.email;
+
+        function emailIsValid (email) { // using regex to check if its a valid email ex: emailname@domain.con
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+        if (!emailIsValid(email)) { // end the request and return a 400 status code
+            res.status(400).send('Invalid email');
+            return;
+        }
+        next(); // email is valid move to the next middleware
     }
 }

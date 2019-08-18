@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+
 /*
 *** This is helper module is used to hash new password and verify hashed password
 */

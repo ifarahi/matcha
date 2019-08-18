@@ -139,6 +139,29 @@ module.exports = {
         const token = jwt.sign(User, process.env.PRIVATE_KEY); // sign the user token with the private key
         res.header('x-auth-token', token) // set the user token on the header
             .json(User); // send the user row in the body
+    },
+
+    forgetPassword: async (req, res) => { // @forgetPassword responsable for sending a link to reinitialize account password
+        const accountExist = await userModel.fetchUserWithEmail(req.params.email); // fetch the user row with the email is its exist
+        if (!accountExist) { // if the account not exist end the request with 400 status code 
+            res.status(400).send('Account does not exist'); 
+            return;
+        }
+
+        const token = await random(32); // generate a 32 random characters hashed
+        const data = {
+            token: token, 
+            email: req.params.email
+        }
+        try { // save the token and send recovery link
+            userModel.setForgetPasswordHash({token, email: req.params.email}); // save the forget password token on the user row
+            mail.forgetPassword({token, email: req.params.email}); // email the user with the link
+            res.status(200).send('Email has been sent'); // end the request with 200 status
+
+        } catch (error) { // if something went wrong end the process and send the error
+            res.send(`somthing went wrong: ${error}`);
+            return;
+        }
     }
 
 }

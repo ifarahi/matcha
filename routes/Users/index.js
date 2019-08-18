@@ -16,6 +16,6 @@ router.post('/login', userController.login); // if the request reached this part
 
 router.get('/completeRegistration/:email/:token', userController.completeRegistarion); // verifying user email
 
-router.post('/update', auth, (req, res) => res.send(req.body.decodedObject));
+router.get('/forgetPassword/:email', validation.forgetPassword, userController.forgetPassword);
 
 module.exports = router;

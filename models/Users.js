@@ -74,5 +74,14 @@ module.exports = {
                 resolve(result[0]);
             });
         });
+    },
+
+    setForgetPasswordHash: (data) => { // set the forget password hash in the user row
+        return new Promise((resolve, reject) => { 
+            database.query('UPDATE users SET forget_pass_hash = ? WHERE email = ?',[data.token, data.email], (error, result) => {
+                if (error) reject(error);
+                resolve('Account has been verified');
+            });
+        });
     }
 }
