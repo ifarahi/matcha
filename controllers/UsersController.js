@@ -22,7 +22,7 @@ module.exports = {
             gender,
             email,
             password: await password_helper.password_hash(password),
-            verify_email_hash: await random(32) // Genrate a random 32 lenght string hashed in md5 to be used in email verification
+            verify_email_token: await random.generate(32) // Genrate a random 32 lenght string hashed in md5 to be used in email verification
         }
         const responseObject = { // the response object to be send back
             status: 0, // response status
@@ -87,7 +87,7 @@ module.exports = {
                 res.json(responseObject);
                 return;
             }
-            const tokenResult = await userModel.checkEmailVerificationHash(data); 
+            const tokenResult = await userModel.checkEmailVerificationToken(data); 
             if (tokenResult < 1) { // now check if the given token belong to that user if not end the request ans send the response object
                 responseObject.status =  400;
                 responseObject.message = "invalid token";
@@ -148,19 +148,57 @@ module.exports = {
             return;
         }
 
-        const token = await random(32); // generate a 32 random characters hashed
-        const data = {
+        const token = await random.generate(32); // generate a 32 random characters hashed
+        const data = { // the data wich will be used to store the token on the user db and email the user with the token
             token: token, 
             email: req.params.email
         }
+
         try { // save the token and send recovery link
-            userModel.setForgetPasswordHash({token, email: req.params.email}); // save the forget password token on the user row
-            mail.forgetPassword({token, email: req.params.email}); // email the user with the link
+            userModel.setForgetPasswordToken(data); // save the forget password hashedToken on the user row
+            mail.forgetPassword(data); // email the user with the link
             res.status(200).send('Email has been sent'); // end the request with 200 status
 
         } catch (error) { // if something went wrong end the process and send the error
             res.send(`somthing went wrong: ${error}`);
             return;
+        }
+    },
+
+    isValidToken : async (req, res) => { // verify if the token is valid 
+        const isValidToken = await userModel.isValidToken(req.params.token); // check if there is a user with the given token
+
+        if (isValidToken < 1) { // if there is not user with this recovery token end the request with a 400 status code and false value
+            res.status(400).json({validToken: false}); // send response back
+            return; //
+        } else { // if it's exist return a 200 status code and true value
+            res.status(200).json({validToken: true}); // send response back
+        }
+    },
+
+    reinitializePassword: async (req, res) => { // re-initialize user password with the give token
+        const {token, password} = req.body; // extract data from the request body
+        const userRow = await userModel.fetchUserWithRecoveryToken(token); // fetch the user with the recovery token is it's exist
+
+        if (!userRow) { // if there is no user with the give token end the request with a 400 status code 
+            res.status(400).send('Invalid token');
+            return;
+        }
+        try { // update the user password
+            const hashedPassword = await password_helper.password_hash(password); // hash the user password to be stored on the database
+            const data = { // data object wich will be used with updateUserPassword() on the userModel
+                id: userRow.id, // extract the user id from the user row
+                password: hashedPassword
+            }
+            const result = await userModel.updateUserPassword(data); // update the user password
+
+            if (result) { // if the password is updated send a response with 200 status code
+                userModel.unsetForgetPasswordToken(data.id); // unset the password re-initialization token so it cant be used anymore
+                res.status(200).send('Password has been updated');
+            }
+
+        } catch (error) {
+            res.send(`somting went wrong error: ${error}`);
         }
     }
 

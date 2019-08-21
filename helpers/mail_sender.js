@@ -27,7 +27,7 @@ module.exports = {
             html: `
             <h1>Please click on the link to complete your registration</h1>
             <br >
-            <a href="http://localhost:3000/users/completeRegistration/${data.email}/${data.verify_email_hash}">
+            <a href="http://localhost:3000/users/completeRegistration/${data.email}/${data.verify_email_token}">
             Click here
             </a>
             ` // html body

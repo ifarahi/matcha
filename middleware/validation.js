@@ -4,6 +4,7 @@
 *** @register : This middleware is responsable for validating registration forms 
 *** @login : This middleware is responsable for validating login forms
 *** @forgetPassword : validate if the email is a valid email
+*** @reinitializePassword : Check if the new password is srtong and password and confirm pass is matched
 */
 
 module.exports = {
@@ -25,7 +26,7 @@ module.exports = {
         }
         if (firstname && lastname && username && gender && email && password) {
 
-            if (gender.trim().length < 4)
+            if (gender.trim().length < 3)
                 errorObject.message = "Invalid gender";
             if (firstname.trim().length < 6)
                 errorObject.message = "Invalid firstname";
@@ -93,5 +94,23 @@ module.exports = {
             return;
         }
         next(); // email is valid move to the next middleware
+    },
+
+    reinitializePassword : (req, res, next) => {
+        const {password, confirmPassword} = req.body; // extract password and confirm password
+
+        function strongPassword(password) { // using regex to check if the password is strong enough : at least 8 characters one capital latter and one special character
+            var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+            return strongRegex.test(password);
+        }
+        if (!strongPassword(password)) { // if the password if not strong end the request 
+            res.status(400).send('Invalid password');
+            return;
+        }
+        if (password !== confirmPassword) { // if the passwords not match end the request
+            res.status(400).send('Password not match');
+            return;
+        }
+        next(); // if all the statments has been passed with no error call to the next middleware
     }
 }

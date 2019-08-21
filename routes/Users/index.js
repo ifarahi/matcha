@@ -16,6 +16,9 @@ router.post('/login', userController.login); // if the request reached this part
 
 router.get('/completeRegistration/:email/:token', userController.completeRegistarion); // verifying user email
 
-router.get('/forgetPassword/:email', validation.forgetPassword, userController.forgetPassword);
+router.get('/forgetPassword/:email', validation.forgetPassword, userController.forgetPassword); // send a recovery email to user to re-initialize account password
+
+router.get('/isValidToken/:token', userController.isValidToken); // verify if the given token is valid (belong to a user)
+router.post('/reinitializePassword', validation.reinitializePassword, userController.reinitializePassword); // set new password to the user with the give token
 
 module.exports = router;

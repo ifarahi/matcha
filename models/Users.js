@@ -28,9 +28,9 @@ module.exports = {
 
     register: (data) => { // regitser a new user
         return new Promise((resolve, reject) => { 
-            const   { firstname, lastname, username, gender, email, password, verify_email_hash } = data; // using objects destructuring to extract only needed informations from the request body 
-            const   sql = 'INSERT INTO users (firstname, lastname, username, gender, email, password, verify_email_hash) VALUES (?, ?, ?, ?, ?, ?, ?)'; // prepare the statement using positional params '?'
-            const   values = [ firstname, lastname, username, gender, email, password, verify_email_hash]; // values to be binded the first '?' will be replaced with the first element in the array and so on
+            const   { firstname, lastname, username, gender, email, password, verify_email_token } = data; // using objects destructuring to extract only needed informations from the request body 
+            const   sql = 'INSERT INTO users (firstname, lastname, username, gender, email, password, verify_email_token) VALUES (?, ?, ?, ?, ?, ?, ?)'; // prepare the statement using positional params '?'
+            const   values = [ firstname, lastname, username, gender, email, password, verify_email_token]; // values to be binded the first '?' will be replaced with the first element in the array and so on
             database.query(sql, values, (error, result) => {
                 if (error) reject(error);
                 resolve(result);
@@ -38,10 +38,10 @@ module.exports = {
         });
     },
 
-    checkEmailVerificationHash: (data) => { // check if the email_verification_hash is belong to the user with the represeting email
+    checkEmailVerificationToken: (data) => { // check if the email_verification_Token is belong to the user with the represeting email
         return new Promise((resolve, reject) => { 
 
-            database.query('SELECT count(*) as rows FROM users WHERE email = ? AND verify_email_hash = ?', [data.email, data.token], (error, result) => {
+            database.query('SELECT count(*) as rows FROM users WHERE email = ? AND verify_email_token = ?', [data.email, data.token], (error, result) => {
                 if (error) reject(error);
                 resolve(result[0].rows);
             });
@@ -76,12 +76,48 @@ module.exports = {
         });
     },
 
-    setForgetPasswordHash: (data) => { // set the forget password hash in the user row
+    setForgetPasswordToken: (data) => { // set the forget password token in the user row
         return new Promise((resolve, reject) => { 
-            database.query('UPDATE users SET forget_pass_hash = ? WHERE email = ?',[data.token, data.email], (error, result) => {
+            database.query('UPDATE users SET forget_pass_token = ? WHERE email = ?',[data.token, data.email], (error, result) => {
                 if (error) reject(error);
-                resolve('Account has been verified');
+                resolve(true);
             });
         });
-    }
+    },
+
+    unsetForgetPasswordToken: (id) => { // unset the forget password token in the user row
+        return new Promise((resolve, reject) => { 
+            database.query('UPDATE users SET forget_pass_token = 0 WHERE id = ?', id, (error, result) => {
+                if (error) reject(error);
+                resolve(true);
+            });
+        });
+    },
+
+    isValidToken: (token) => { // fetch the user with the account recovery token
+        return new Promise((resolve, reject) => { 
+            database.query('SELECT count(*) as rows FROM users WHERE forget_pass_token = ?', token, (error, result) => {
+                if (error) reject(error);
+                resolve(result[0].rows);
+            });
+        });
+    },
+
+    fetchUserWithRecoveryToken: (token) => { // fetch the user with the account recovery token
+        return new Promise((resolve, reject) => { 
+            database.query('SELECT * FROM users WHERE forget_pass_token = ?', token, (error, result) => {
+                if (error) reject(error);
+                resolve(result[0]);
+            });
+        });
+    },
+
+    updateUserPassword: (data) => { // update the user password with the given id
+        return new Promise((resolve, reject) => { 
+            database.query('UPDATE users SET password = ? WHERE id = ?',[data.password, data.id], (error, result) => {
+                if (error) reject(error);
+                resolve(true);
+            });
+        });
+    },
 }
