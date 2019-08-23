@@ -21,7 +21,7 @@ module.exports = {
         }
 
         const   errorObject = { // error object to store any the error message if its found
-            status: 400,
+            status: false,
             message: ""
         }
         if (firstname && lastname && username && gender && email && password) {
@@ -45,17 +45,15 @@ module.exports = {
                 res.json(errorObject);
 
         } else {
-            res.json({
-                status: 400,
-                message: "all informations is required"
-            });
+            errorObject.message = "all informations is required";
+            res.json(errorObject);
         }
     },
 
     login: (req, res, next) => {
         const   {username , password} = req.body; // extract the username and the password from the request body
         const   errorObject = { // init the error object wich will be returned as a response in case of error
-            status: 400,
+            status: false,
             message: ""
         }
 
@@ -76,39 +74,48 @@ module.exports = {
                 res.json(errorObject);
 
         } else {
-            res.json({
-                status: 400,
-                message: "all informations is required"
-            });
+
+            errorObject.message = "all informations is required"; // set the error message
+            res.json(errorObject);
         }
     },
 
     forgetPassword: (req, res, next) => {
         const email = req.params.email;
+        const   errorObject = { // init the error object wich will be returned as a response in case of error
+            status: false,
+            message: ""
+        }
 
         function emailIsValid (email) { // using regex to check if its a valid email ex: emailname@domain.con
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
         }
         if (!emailIsValid(email)) { // end the request and return a 400 status code
-            res.status(400).send('Invalid email');
-            return;
+            errorObject.message = "Invalid email"; // set the error message
+            res.json(errorObject);
         }
         next(); // email is valid move to the next middleware
     },
 
     reinitializePassword : (req, res, next) => {
         const {password, confirmPassword} = req.body; // extract password and confirm password
+        const   errorObject = { // init the error object wich will be returned as a response in case of error
+            status: false,
+            message: ""
+        }
 
         function strongPassword(password) { // using regex to check if the password is strong enough : at least 8 characters one capital latter and one special character
             var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
             return strongRegex.test(password);
         }
         if (!strongPassword(password)) { // if the password if not strong end the request 
-            res.status(400).send('Invalid password');
+            errorObject.message = "Please enter a strong password";
+            res.json(errorObject);
             return;
         }
         if (password !== confirmPassword) { // if the passwords not match end the request
-            res.status(400).send('Password not match');
+            errorObject.message = "Passowrds does not match";
+            res.json(errorObject);
             return;
         }
         next(); // if all the statments has been passed with no error call to the next middleware

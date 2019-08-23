@@ -21,4 +21,6 @@ router.get('/forgetPassword/:email', validation.forgetPassword, userController.f
 router.get('/isValidToken/:token', userController.isValidToken); // verify if the given token is valid (belong to a user)
 router.post('/reinitializePassword', validation.reinitializePassword, userController.reinitializePassword); // set new password to the user with the give token
 
+
+
 module.exports = router;

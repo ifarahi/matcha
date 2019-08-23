@@ -53,7 +53,7 @@ module.exports = {
 
             database.query('UPDATE users SET is_verified = 1 WHERE email = ?', email, (error, result) => {
                 if (error) reject(error);
-                resolve('Account has been verified');
+                resolve(true);
             });
         });
     },
