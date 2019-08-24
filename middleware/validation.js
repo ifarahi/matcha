@@ -5,6 +5,7 @@
 *** @login : This middleware is responsable for validating login forms
 *** @forgetPassword : validate if the email is a valid email
 *** @reinitializePassword : Check if the new password is srtong and password and confirm pass is matched
+*** @completeProfile : Validate the complete profile form
 */
 
 module.exports = {
