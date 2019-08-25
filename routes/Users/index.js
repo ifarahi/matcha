@@ -8,11 +8,9 @@ const   auth = require('../../middleware/auth');
 **** ex : '/register' will be hanled with  userController.register method and '/login' will be hanled with  userController.login method
 */
 
-router.use('/register', validation.register); // if the request is to register a new user the request body should be validate first by the register middlware
-router.post('/register', userController.register); // if the request reached this part thats mean validtion has been successfuly passed
+router.post('/register', validation.register, userController.register); // if the request reached this part thats mean validtion has been successfuly passed
 
-router.use('/login', validation.login); // if the request is to login the request body should be validate first by the login middlware
-router.post('/login', userController.login); // if the request reached this part thats mean validtion has been successfuly passed
+router.post('/login', validation.login, userController.login); // if the request reached this part thats mean validtion has been successfuly passed
 
 router.get('/completeRegistration/:email/:token', userController.completeRegistarion); // verifying user email
 
@@ -21,6 +19,6 @@ router.get('/forgetPassword/:email', validation.forgetPassword, userController.f
 router.get('/isValidToken/:token', userController.isValidToken); // verify if the given token is valid (belong to a user)
 router.post('/reinitializePassword', validation.reinitializePassword, userController.reinitializePassword); // set new password to the user with the give token
 
-router.post('/completeProfile');
+router.post('/completeProfile', auth, validation.completeProfile, userController.completeProfile); // check if the user is login , validate the form, save the data
 
 module.exports = router;

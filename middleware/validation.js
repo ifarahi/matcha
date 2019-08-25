@@ -11,6 +11,10 @@
 module.exports = {
     register: (req, res, next) => {
         const   { firstname, lastname, username, email, password, gender } = req.body; // using objects destructuring to extract only needed informations from the request body
+        const   errorObject = { // error object to store any the error message if its found
+            status: false,
+            message: ""
+        }
 
         function emailIsValid (email) { // using regex to check if its a valid email ex: emailname@domain.con
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
@@ -21,10 +25,6 @@ module.exports = {
             return strongRegex.test(password);
         }
 
-        const   errorObject = { // error object to store any the error message if its found
-            status: false,
-            message: ""
-        }
         if (firstname && lastname && username && gender && email && password) {
 
             if (gender.trim().length < 3)
@@ -120,5 +120,45 @@ module.exports = {
             return;
         }
         next(); // if all the statments has been passed with no error call to the next middleware
+    },
+
+    completeProfile: (req, res, next) => {
+        const { age, bio, sexual_preferences } = req.body; // extract the data from the body
+        const { tag0, tag1, tag2, tag3, tag4 } = req.body.tags; // extarct the tags from the tags object
+        const   errorObject = { // init the error object wich will be returned as a response in case of error
+            status: false,
+            message: ""
+        }
+
+        if (age && bio && sexual_preferences && tag0 && tag1 && tag2 && tag3 && tag4) {
+
+            if (!Number.isInteger(age)) // if the value is not a number
+                errorObject.message = "please enter a valid number";
+            if (bio.trim().length < 30)
+                errorObject.message = "at least you should write a 30 characters";
+            if (bio.trim().length > 599) 
+                errorObject.message = "you cant write more than 600 characters";
+            if (sexual_preferences.trim().length < 3)
+                errorObject.message = "Invalid choice";
+            if (tag0.trim().length < 3)
+                errorObject.message = "Invalid tag";
+            if (tag1.trim().length < 3)
+                errorObject.message = "Invalid tag";
+            if (tag2.trim().length < 3)
+                errorObject.message = "Invalid tag";
+            if (tag3.trim().length < 3)
+                errorObject.message = "Invalid tag";
+            if (tag4.trim().length < 3)
+                errorObject.message = "Invalid tag";
+
+            if (!errorObject.message) // if error message is empty thats mean all test has been passed with no error so pass controll to the next middlware 
+                next();
+            else // end up the request and send back the error object
+                res.json(errorObject);
+
+        } else {
+            errorObject.message = "all informations is required";
+            res.json(errorObject);
+        }
     }
 }

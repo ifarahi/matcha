@@ -218,6 +218,10 @@ module.exports = {
         } catch (error) {
             res.send(`somting went wrong error: ${error}`);
         }
+    },
+
+    completeProfile: async (req, res) => {
+        res.json(res.body);
     }
 
 }
