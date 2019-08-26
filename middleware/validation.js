@@ -129,7 +129,7 @@ module.exports = {
             status: false,
             message: ""
         }
-
+        
         if (age && bio && sexual_preferences && tag0 && tag1 && tag2 && tag3 && tag4) {
 
             if (!Number.isInteger(age)) // if the value is not a number

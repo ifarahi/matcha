@@ -120,4 +120,25 @@ module.exports = {
             });
         });
     },
+
+    completeProfile: (data) => {
+        return new Promise((resolve, reject) => { 
+            const   { age, bio, sexual_preferences, id } = data; // using objects destructuring to extract only needed informations from the request body 
+            const   sql = 'UPDATE users SET age = ?, bio = ?, sexual_preferences = ?, is_first_visit = 0 WHERE id = ?'; // prepare the statement using positional params '?'
+            const   values = [ age, bio, sexual_preferences, id]; // values to be binded the first '?' will be replaced with the first element in the array and so on
+            database.query(sql, values, (error, result) => {
+                if (error) reject(error);
+                resolve(true);
+            });
+        });
+    },
+
+    insertUserTag: (data) => { // insert in tags table the user id and the tag
+        return new Promise((resolve, reject) => { 
+            database.query('INSERT INTO tags (user_id, tag) VALUES (?, ?)',[data.id, data.tag], (error, result) => {
+                if (error) reject(error);
+                resolve(true);
+            });
+        });
+    }
 }

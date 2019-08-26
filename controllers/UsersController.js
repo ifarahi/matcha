@@ -105,28 +105,28 @@ module.exports = {
 
     login: async (req, res) => { // @login responsable to login users and send back JWT for every successful login operation
         const   {username , password} = req.body; // extract the username and the password from the request body
-        const   responseObject = { // the response object to be send back
+        const   responseObject = { // the error object to be send back
             status: false,
             message: ""
         }
 
         const userRow = await userModel.fetchUserWithUsername(username); // fetch the user row if its exist
         if (!userRow) {// if the username not exists set the errorObject and end the request
-            errorObject.message = "Invalid username or password"; // the user should not know wich one is incorrect for security reasons
-            res.json(errorObject);
+            responseObject.message = "Invalid username or password"; // the user should not know wich one is incorrect for security reasons
+            res.json(responseObject);
             return
         }
 
         const isPasswordCurrect = await password_helper.password_verify(password, userRow.password); // comapre the entred password with the user password
         if (!isPasswordCurrect) { // if the password is not currect set the errorObject and end the request
-            errorObject.message = "Invalid username or password"; // the user should not know wich one is incorrect for security reasons
-            res.json(errorObject);
+            responseObject.message = "Invalid username or password"; // the user should not know wich one is incorrect for security reasons
+            res.json(responseObject);
             return
         }
 
         if (!userRow.is_verified) { // if the username and password is currect check if the user account is verified if not set the 
-            errorObject.message = "Account is not verified";
-            res.json(errorObject);
+            responseObject.message = "Account is not verified";
+            res.json(responseObject);
             return
         }
 
@@ -135,7 +135,7 @@ module.exports = {
         responseObject.status = true; // set the response status to true (user is currectly logged in)
         responseObject.user = User; // include the user data in the response object
         res.header('x-auth-token', token) // set the user token on the header
-            .json(User); // send the user row in the body
+            .json(responseObject); // send the user row in the body
     },
 
     forgetPassword: async (req, res) => { // @forgetPassword responsable for sending a link to reinitialize account password
@@ -221,7 +221,32 @@ module.exports = {
     },
 
     completeProfile: async (req, res) => {
-        res.json(res.body);
+        const { age, bio, sexual_preferences, tags } = req.body; // extract data from the request body
+        const data = { // the data that will be inserted in the database
+            age,
+            bio,
+            sexual_preferences,
+            id: req.body.decodedObject.id // extract the user id from the decodedObject (the object returned after decoding the auth-token wich contain the user data)
+        }
+        const tgs = Object.values(tags); // convert the tags object to an array of tags to use foreach method on it
+        const responseObject = { // the response object to be sent back 
+            status: true,
+            message: "Your profile is completed"
+        }
+
+        try {
+            userModel.completeProfile(data); // insert the user data and set the (its_first_visit = 0) to indicate it no longer the first visit
+            tgs.forEach(tag => { // loop through the tags array and for every tag save it into the tags table
+                userModel.insertUserTag({ // takes an object contain the user id and the tag
+                        id: req.body.decodedObject.id, // the user id from the decodedOject (added by the auth middleware after decoding the auth-token)
+                        tag
+                    }); 
+            });
+            res.json(responseObject);
+        } catch (error) {
+            res.send(`somthing went wrong: ${error}`);
+            return;
+        }
     }
 
 }

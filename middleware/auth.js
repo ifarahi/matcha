@@ -11,16 +11,23 @@ module.exports = (req, res, next) => { // take the request and check the header 
         message: ""
     };
 
-    if(!token) // first of all check if there is any token if not end the request and set the error object
+    if(!token) {// first of all check if there is any token if not end the request and set the error object
         errorObject.message = 'Access denied. No token provided';
         res.json(errorObject);
         return;
+    }
 
     try { // Now verify the token if is valid its return the payload object if ! its throw an exception
-        const decodedObject = jwt.verify(token, process.env.PRIVATE_KEY);
-        req.body.decodedObject = decodedObject; // put the decoded object (Payload) in the request body
-        next(); // call to the next middleware
-        return;
+        jwt.verify(token, process.env.PRIVATE_KEY, (error, decoded) => {
+            if (!error) { // if there is no error its a valid token
+                req.body.decodedObject = decoded; // put the decoded object (Payload) in the request body
+                next(); // call to the next middleware
+            } else {
+                errorObject.message = 'Access denied. Invalid token provided';
+                res.json(errorObject);
+            }
+        });
+
     } catch (error) { // if the token is invalid send a 400 status code and end the request
         res.send(`something went wrong error: ${error}`)
     }
