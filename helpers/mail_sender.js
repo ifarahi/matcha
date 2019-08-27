@@ -56,11 +56,9 @@ module.exports = {
             to: data.email, // list of receivers
             subject: '[MATCHA] Account recovery', // Subject line
             html: `
-            <h1>Please click on the link to re-initialize your password</h1>
+            <h1>Here is your account recovery token</h1>
             <br >
-            <a href="http://localhost:3000/users/reinitializePassword/${data.token}">
-            Click here
-            </a>
+            <h1>${data.token}</h1>
             ` // html body
         });
 

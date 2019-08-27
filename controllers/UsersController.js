@@ -151,7 +151,7 @@ module.exports = {
             return;
         }
 
-        const token = await random.generate(32); // generate a 32 random characters hashed
+        const token = await random.generate(16); // generate a 16 random characters 
         const data = { // the data wich will be used to store the token on the user db and email the user with the token
             token: token, 
             email: req.params.email
