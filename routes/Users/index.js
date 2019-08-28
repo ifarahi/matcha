@@ -6,11 +6,13 @@ const   auth = require('../../middleware/auth');
 /*
 **** Users router responsable for any request belong to the users controller check the request and pass it to be hanled with the right method 
 **** ex : '/register' will be hanled with  userController.register method and '/login' will be hanled with  userController.login method
+**** IMPORTANT : every route start with '/setting/...' require the auth is used to update the user infromation from the setting page
+****
 */
 
 router.post('/register', validation.register, userController.register); // if the request reached this part thats mean validtion has been successfuly passed
 
-router.post('/login', validation.login, userController.login); // if the request reached this part thats mean validtion has been successfuly passed
+router.post('/login', userController.login); // check if the user exist login the user
 
 router.get('/completeRegistration/:email/:token', userController.completeRegistarion); // verifying user email
 
@@ -20,5 +22,9 @@ router.get('/isValidToken/:token', userController.isValidToken); // verify if th
 router.post('/reinitializePassword', validation.reinitializePassword, userController.reinitializePassword); // set new password to the user with the give token
 
 router.post('/completeProfile', auth, validation.completeProfile, userController.completeProfile); // check if the user is login , validate the form, save the data
+
+router.post('/setting/changePassword', auth, validation.changePassword, userController.changePassword); // change user password after login
+
+router.post('/setting/changePersonalInformations', auth, validation.changePersonalInformations, userController.changePersonalInformations);
 
 module.exports = router;
