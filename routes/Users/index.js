@@ -28,3 +28,4 @@ router.post('/setting/changePassword', auth, validation.changePassword, userCont
 router.post('/setting/changePersonalInformations', auth, validation.changePersonalInformations, userController.changePersonalInformations);
 
 module.exports = router;
+ 
