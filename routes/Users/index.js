@@ -12,7 +12,7 @@ const   auth = require('../../middleware/auth');
 
 router.post('/register', validation.register, userController.register); // if the request reached this part thats mean validtion has been successfuly passed
 
-router.post('/login', userController.login); // check if the user exist login the user
+router.post('/login', validation.login, userController.login); // check if the user exist login the user
 
 router.get('/completeRegistration/:email/:token', userController.completeRegistarion); // verifying user email
 
