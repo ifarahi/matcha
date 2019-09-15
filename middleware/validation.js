@@ -26,7 +26,6 @@ module.exports = {
         }
 
         if (firstname && lastname && username && gender && email && password) {
-
             if (gender.trim().length < 3)
                 errorObject.message = "Invalid gender";
             if (firstname.trim().length < 6)
@@ -46,7 +45,6 @@ module.exports = {
                 next();
             else // end up the request and send back the error object
                 res.json(errorObject);
-
         } else {
             errorObject.message = "all informations is required";
             res.json(errorObject);
@@ -130,7 +128,7 @@ module.exports = {
                 res.json(errorObject);
 
         } else {
-            errorObject.message = "all informations is required";
+            errorObject.message = "all informations are required";
             res.json(errorObject);
         }
     },

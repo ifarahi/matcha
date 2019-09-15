@@ -1,6 +1,9 @@
 const express = require('express');
 const app = express();
 const router = require('./routes');
+var cors = require('cors');
+
+app.use(cors());
 
 app.use(express.json()); // parse the body wich is contain a json object then pass controll the the router
 app.use(router); // all requests will be hanlled by the router
