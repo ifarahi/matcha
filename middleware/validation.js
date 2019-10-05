@@ -21,18 +21,18 @@ module.exports = {
         }
 
         function strongPassword(password) { // using regex to check if the password is strong enough : at least 8 characters one capital latter and one special character
-            var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+            var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,36})");
             return strongRegex.test(password);
         }
 
         if (firstname && lastname && username && gender && email && password) {
             if (gender.trim().length < 3)
                 errorObject.message = "Invalid gender";
-            if (firstname.trim().length < 6)
+            if (firstname.trim().length < 3)
                 errorObject.message = "Invalid firstname";
-            if (lastname.trim().length < 6)
+            if (lastname.trim().length < 3)
                 errorObject.message = "Invalid lastname";
-            if (username.trim().length < 6)
+            if (username.trim().length < 3)
                 errorObject.message = "Invalid username";
             if(!emailIsValid(email))
                 errorObject.message = "Invalid email";
@@ -46,7 +46,29 @@ module.exports = {
             else // end up the request and send back the error object
                 res.json(errorObject);
         } else {
-            errorObject.message = "all informations is required";
+            errorObject.message = "All informations are required";
+            res.json(errorObject);
+        }
+    },
+
+    login: (req, res, next) => {
+        const   { username, password } = req.body; // using objects destructuring to extract only needed informations from the request body
+        const   errorObject = { // error object to store any the error message if its found
+            status: false,
+            message: ""
+        }
+
+        if (username && password) {
+            if (username.trim().length < 3)
+                errorObject.message = "Invalid username";
+            if (password.trim().length < 8)
+                errorObject.message = "Invalid firstname";
+            if (!errorObject.message) // if error message is empty thats mean all test has been passed with no error so pass controll to the next middlware 
+                next();
+            else // end up the request and send back the error object
+                res.json(errorObject);
+        } else {
+            errorObject.message = "All informations are required";
             res.json(errorObject);
         }
     },
