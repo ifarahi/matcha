@@ -5,11 +5,11 @@ const   mysql   = require('mysql');
 */
 
 const db = mysql.createConnection({
-    host     : '10.11.1.2',
+    host     : 'localhost',
     port     : '3306',
     user     : 'root',
-    password : 'tiger', // using the password stored in the env variable called 'DB_PASS' : run the cmd export DB_PASS='password'
-    database : 'Matcha'
+    password : process.env.DB_PASS, // using the password stored in the env variable called 'DB_PASS' : run the cmd export DB_PASS='password'
+    database : 'matcha'
   });
    
 db.connect();

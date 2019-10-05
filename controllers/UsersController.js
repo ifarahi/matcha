@@ -237,7 +237,7 @@ module.exports = {
 
         // if the user account is not verified cannot complete profile end the request
         if (userRow.is_verified < 1) { // check if the user account is not verified
-            responseObject.message = "You need to verify your account to complete your profile"
+            responseObject.message = "You need to verify your account to complete your profile";
             res.json(responseObject);
             return;
         }
