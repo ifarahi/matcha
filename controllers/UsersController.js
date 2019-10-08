@@ -125,9 +125,22 @@ module.exports = {
         }
 
         if (!userRow.is_verified) { // if the username and password is currect check if the user account is verified if not set the 
-            responseObject.message = "Account is not verified";
-            res.json(responseObject);
-            return
+            try {
+                const userRow = await userModel.fetchUserWithUsername(username); //get the user email with the given username
+                const   data = { // the data object so set a new verification token in case the user didn't recieve the verification email
+                    email: userRow.email,
+                    verify_email_token: await random.generate(32) // Genrate a random 32 lenght string hashed in md5 to be used in email verification
+                }
+
+                userModel.setNewEmailConfirmationToken(data)
+                mail.completeRegistarion(data); // send complete resgistration mail
+                responseObject.message = "Account is not verified, We have sent you a new email to complete your registration";
+                res.json(responseObject);
+                return
+            } catch (error) {  // if the promise rejected end the request and send the error 
+                res.send(`somthing went wrong: ${error}`);
+                return;
+            }
         }
 
         const User = _.pick(userRow, ['id', 'username', 'firstname', 'lastname', 'age', 'gender', 'bio', 'sexual_preferences', 'email', 'longitude', 'latitude', 'is_first_visit']); //usng lodash to pick only needed informations
@@ -384,6 +397,12 @@ module.exports = {
                 return;
             }
         }
+    },
+
+    testUser: async (req, res) => {
+        const {username} = req.body;
+        const userRow = 
+        res.send(userRow.email);
     }
 
 }

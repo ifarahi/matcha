@@ -162,4 +162,16 @@ module.exports = {
             });
         });
     },
+
+    setNewEmailConfirmationToken: (data) => {
+        return new Promise((resolve, reject) => {
+            const   { email, verify_email_token} = data;
+            const   sql = 'UPDATE users SET verify_email_token = ? WHERE email = ?'; 
+            const   values = [email, verify_email_token]; // values to be binded the first '?' will be replaced with the first element in the array and so on
+            database.query(sql, values, (error, result) => {
+                if (error) reject(error);
+                resolve(true);
+            });
+        });
+    }
 }
