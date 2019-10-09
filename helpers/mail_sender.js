@@ -27,7 +27,7 @@ module.exports = {
             html: `
             <h1>Please click on the link to complete your registration</h1>
             <br >
-            <a href="http://localhost:3000/users/completeRegistration/${data.email}/${data.verify_email_token}">
+            <a href="http://localhost:3001/confirmation/${data.email}/${data.verify_email_token}">
             Click here
             </a>
             ` // html body
@@ -59,6 +59,12 @@ module.exports = {
             <h1>Here is your account recovery token</h1>
             <br >
             <h1>${data.token}</h1>
+
+            <h1>Please click on the link to reset our password</h1>
+            <br >
+            <a href="http://localhost:3001/resetpassword/${data.token}">
+            Click here
+            </a>
             ` // html body
         });
 

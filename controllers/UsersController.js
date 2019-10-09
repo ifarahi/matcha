@@ -37,7 +37,7 @@ module.exports = {
                 return;
             }
         } catch (error) {  // if the promise rejected end the request and send the error 
-            res.send(`somthing went wrong: ${error}`);
+            res.send(`something went wrong: ${error}`);
             return;
         }
 
@@ -49,7 +49,7 @@ module.exports = {
                 return;
             }
         } catch (error) { // if the promise rejected end the request and send the error 
-            res.send(`somthing went wrong: ${error}`);
+            res.send(`something went wrong: ${error}`);
             return;
         }
 
@@ -60,7 +60,7 @@ module.exports = {
             mail.completeRegistarion(data); // send complete resgistration mail
             res.json(responseObject);
         } catch (error) {  // if the promise rejected end the request and send the error 
-            res.send(`somthing went wrong: ${error}`);
+            res.send(`something went wrong: ${error}`);
             return;
         }
 
@@ -97,7 +97,7 @@ module.exports = {
             res.json(responseObject);
 
         } catch (error) {  // if the promise rejected end the request and send the error 
-            res.send(`somthing went wrong: ${error}`);
+            res.send(`something went wrong: ${error}`);
             return;
         }
 
@@ -138,7 +138,7 @@ module.exports = {
                 res.json(responseObject);
                 return
             } catch (error) {  // if the promise rejected end the request and send the error 
-                res.send(`somthing went wrong: ${error}`);
+                res.send(`something went wrong: ${error}`);
                 return;
             }
         }
@@ -178,7 +178,7 @@ module.exports = {
             res.json(responseObject);
 
         } catch (error) { // if something went wrong end the process and send the error
-            res.send(`somthing went wrong: ${error}`);
+            res.send(`something went wrong: ${error}`);
             return;
         }
     },
@@ -266,7 +266,7 @@ module.exports = {
             });
             res.json(responseObject);
         } catch (error) {
-            res.send(`somthing went wrong: ${error}`);
+            res.send(`something went wrong: ${error}`);
             return;
         }
     },
@@ -328,7 +328,7 @@ module.exports = {
                     change = 1; // set the change to 1 and move to the next statement
                 }
             } catch (error) {  // if the promise rejected end the request and send the error 
-                res.send(`somthing went wrong: ${error}`);
+                res.send(`something went wrong: ${error}`);
                 return;
             }
         }
@@ -343,7 +343,7 @@ module.exports = {
                     change = 1; // set the change to 1 and move to the next statement
                 }
             } catch (error) { // if the promise rejected end the request and send the error 
-                res.send(`somthing went wrong: ${error}`);
+                res.send(`something went wrong: ${error}`);
                 return;
             }
         } 
@@ -393,7 +393,7 @@ module.exports = {
                     res.json(responseObject);
                 }
             } catch (error) {
-                res.send(`somthing went wrong: ${error}`);
+                res.send(`something went wrong: ${error}`);
                 return;
             }
         }
