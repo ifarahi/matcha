@@ -62,7 +62,7 @@ module.exports = {
 
             <h1>Please click on the link to reset our password</h1>
             <br >
-            <a href="http://localhost:3001/resetpassword/${data.token}">
+            <a href="http://localhost:3001/newpassword/${data.token}">
             Click here
             </a>
             ` // html body
