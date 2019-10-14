@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Oct 14, 2019 at 08:59 PM
+-- Generation Time: Oct 14, 2019 at 09:05 PM
 -- Server version: 5.7.27
 -- PHP Version: 7.2.22
 
@@ -51,7 +51,7 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `longitude` varchar(255) NOT NULL DEFAULT '0',
   `latitude` varchar(255) NOT NULL DEFAULT '0',
-  `is_verified` int(11) DEFAULT NULL,
+  `is_verified` int(11) NOT NULL DEFAULT '0',
   `is_first_visit` int(11) DEFAULT '1',
   `verify_email_token` varchar(255) NOT NULL DEFAULT '0',
   `forget_pass_token` varchar(255) NOT NULL DEFAULT '0',
