@@ -116,17 +116,34 @@ module.exports = {
     },
 
     completeProfile: (req, res, next) => {
-        const { age, bio, sexual_preferences } = req.body; // extract the data from the body
+        const { birthdate, bio, sexual_preferences } = req.body; // extract the data from the body
         const { tag0, tag1, tag2, tag3, tag4 } = req.body.tags; // extarct the tags from the tags object
         const   errorObject = { // init the error object wich will be returned as a response in case of error
             status: false,
             message: ""
         }
         
-        if (age && bio && sexual_preferences && tag0 && tag1 && tag2 && tag3 && tag4) {
+        function isValidBirthdate(birthdate) {
+            const [month = null, day = null, year = null] = birthdate.split('-');
+            const nowDate = new Date();
 
-            if (!Number.isInteger(age)) // if the value is not a number
-                errorObject.message = "please enter a valid number";
+            if (day === null || month === null || year === null)
+                return (false);
+            if ((parseInt(day) !== NaN) && (parseInt(month) !== NaN) && (parseInt(year) !== NaN))
+            {
+                if ((parseInt(day) > 0 && parseInt(day) <= 31) && (parseInt(month) > 0 && parseInt(month) <= 12) && (parseInt(year) < nowDate.getFullYear()))
+                    return (true);
+                else
+                    return (false)
+            } else {
+                return (false);
+            }
+        }
+        
+        if (bio && sexual_preferences && tag0 && tag1 && tag2 && tag3 && tag4) {
+
+            if (!isValidBirthdate(birthdate)) // if the value is not a number
+                errorObject.message = "invalid birthdate";
             if (bio.trim().length < 30)
                 errorObject.message = "at least you should write a 30 characters";
             if (bio.trim().length > 599) 
