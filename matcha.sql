@@ -2,10 +2,10 @@
 -- version 4.9.1
 -- https://www.phpmyadmin.net/
 --
--- Host: db
--- Generation Time: Oct 14, 2019 at 09:05 PM
--- Server version: 5.7.27
--- PHP Version: 7.2.22
+-- Hôte : db
+-- Généré le :  mar. 15 oct. 2019 à 17:09
+-- Version du serveur :  5.7.27
+-- Version de PHP :  7.2.22
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -19,25 +19,24 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `matcha`
+-- Base de données :  `matcha`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tags`
+-- Structure de la table `tags`
 --
 
 CREATE TABLE `tags` (
   `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `tag` varchar(500) NOT NULL
+  `name` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Structure de la table `users`
 --
 
 CREATE TABLE `users` (
@@ -59,37 +58,75 @@ CREATE TABLE `users` (
   `sexual_preferences` varchar(255) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+-- --------------------------------------------------------
+
 --
--- Indexes for dumped tables
+-- Structure de la table `user_tags`
+--
+
+CREATE TABLE `user_tags` (
+  `id` int(11) NOT NULL,
+  `tag_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Index pour les tables déchargées
 --
 
 --
--- Indexes for table `tags`
+-- Index pour la table `tags`
 --
 ALTER TABLE `tags`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`);
 
 --
--- Indexes for table `users`
+-- Index pour la table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- Index pour la table `user_tags`
+--
+ALTER TABLE `user_tags`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `tag_id` (`tag_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- AUTO_INCREMENT pour les tables déchargées
 --
 
 --
--- AUTO_INCREMENT for table `tags`
+-- AUTO_INCREMENT pour la table `tags`
 --
 ALTER TABLE `tags`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `users`
+-- AUTO_INCREMENT pour la table `users`
 --
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT pour la table `user_tags`
+--
+ALTER TABLE `user_tags`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Contraintes pour les tables déchargées
+--
+
+--
+-- Contraintes pour la table `user_tags`
+--
+ALTER TABLE `user_tags`
+  ADD CONSTRAINT `user_tags_ibfk_1` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`),
+  ADD CONSTRAINT `user_tags_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
