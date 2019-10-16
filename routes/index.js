@@ -9,6 +9,6 @@ const   Profile = require('./Profile');
 */
 
 router.use('/users', Users); // any reqeust contains '/users' will be handled by the user router 
-// router.use('/profile', Profile);
+router.use('/profile', Profile);
 
 module.exports = router;
