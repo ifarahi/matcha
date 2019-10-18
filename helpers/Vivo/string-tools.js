@@ -1,8 +1,3 @@
-const string = function() {
-    this.isString = true;
-    return (this);
-}
-
 const number = function() {
     this.isNumber = true;
     return (this);
@@ -38,19 +33,30 @@ const min = function(length) {
     return (this);
 }
 
-const pattern = function(pattern) {
-    this.hasPattern = pattern;
+const pattern = function(pattern, message = null) {
+    this.hasPattern.pattern = pattern;
+    this.hasPattern.message = message;
     return (this);
 }
 
+const birthdate = function() {
+    this.isBirthdate = true;
+    return (this);
+}
+
+const ref = function(refValue) {
+    this.reference = refValue;
+    return(this);
+}
+
 module.exports = {
-    string,
-    number,
     email,
     required,
     max,
     min,
     pattern,
     alpha,
-    alphanum
+    alphanum,
+    birthdate,
+    ref
 }

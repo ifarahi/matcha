@@ -1,74 +1,82 @@
 const stringTools = require('./string-tools');
 
-const validate = async function (schema, data) {
-    const schemaArray = Object.keys(schema);
-    const responseObject = {
-        status: true,
-        fields: [],
-        details: {}
+const validate = function (input) {        
+    if (this.isRequired === false && input === undefined)
+        return (null);
+    if (this.isRequired === true && input === undefined)
+        return `${this.label} is required.`;
+
+    if (this.reference !== false)
+    {
+        if (input !== this.reference[1])
+            return (`${this.reference[0]} does not match`);
+        else
+            return (null)
     }
-    await schemaArray.forEach(key => {
-        if (schema[key].isRequired === true && data[key] === undefined)
+    if (this.isBirthdate === true) {
+        const [month = null, day = null, year = null] = input.split('-');
+        const nowDate = new Date();
+    
+        if (day === null || month === null || year === null)
+            return ('invalid birthdate');
+        if ((parseInt(day) !== NaN) && (parseInt(month) !== NaN) && (parseInt(year) !== NaN))
         {
-            responseObject.fields.push(key);
-            responseObject.status = false;
-            responseObject.details[key] = `${key} is required.`;
-            return
+            if ((parseInt(day) > 0 && parseInt(day) <= 31) && (parseInt(month) > 0 && parseInt(month) <= 12) && (parseInt(year) < nowDate.getFullYear() && parseInt(year) > 1900))
+                return (null);
+            else
+                return ('invalid birthdate');
+        } else {
+            return ('invalid birthdate');
         }
-        if (typeof data[key] !== 'string') {
-            responseObject.fields.push(key);
-            responseObject.status = false;
-            responseObject.details[key] = `invalid ${key} must be string`;
-            return
-        }
-        if (schema[key].maxLength !== null && data[key].trim().length > schema[key].maxLength) {
-            responseObject.fields.push(key);
-            responseObject.status = false;
-            responseObject.details[key] = `invalid ${key} must be ${schema[key].maxLength} characters max`;
-            return
-        }
-        if (schema[key].minLength !== null && data[key].trim().length < schema[key].minLength) {
-            responseObject.fields.push(key);
-            responseObject.status = false;
-            responseObject.details[key] = `invalid ${key} must be at least ${schema[key].minLength} characters`;
-            return
-        }
-        if (schema[key].isAlpha === true && !/^[a-z]+$/i.test(data[key].trim())) {
-            responseObject.fields.push(key);
-            responseObject.status = false;
-            responseObject.details[key] = `invalid ${key} must contain only characters from (a-Z)`;
-            return
-        }
-        if (schema[key].isAlphanum === true && !/^[a-z0-9]+$/i.test(data[key].trim())) {
-            responseObject.fields.push(key);
-            responseObject.status = false;
-            responseObject.details[key] = `invalid ${key} must contain only characters from (a-Z) or (0-9)`;
-            return
-        }
-        if (schema[key].hasPattern !== null && !schema[key].hasPattern.test(data[key]))
-        {
-            responseObject.fields.push(key);
-            responseObject.status = false;
-            responseObject.details[key] = `invalid ${key} does not match the given pattern`;
-            return
-        }
-    });
-    return (responseObject);
+    }
+    if (this.isEmail === true) {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.trim()))
+            return ('Invalid email adress');
+        else
+            return (null);
+    }
+    if (typeof input !== 'string') 
+        return `invalid ${this.label} must be string`;
+    if (this.maxLength !== null && input.trim().length > this.maxLength) 
+        return `invalid ${this.label} must be ${this.maxLength} characters max`;
+    if (this.minLength !== null && input.trim().length < this.minLength) 
+        return `invalid ${this.label} must be at least ${this.minLength} characters`;
+    if (this.isAlpha === true && !/^[a-z]+$/i.test(input.trim())) 
+        return `invalid ${this.label} must contain only characters from (a-Z)`;
+    if (this.isAlphanum === true && !/^[a-z0-9]+$/i.test(input.trim())) 
+        return `invalid ${this.label} must contain only characters from (a-Z) or (0-9)`;
+    if (this.hasPattern.pattern !== null && !this.hasPattern.pattern.test(input)) {
+        if (this.hasPattern.message !== null)
+            return `invalid ${this.label} ${this.hasPattern.message}`;
+        else
+            return `invalid ${this.label} does not match the given pattern`;
+    }
+    return (null);
 }
 
 module.exports = () =>  {
     return {
+        label: '',
+        reference: false,
+        isEmail: false,
+        isBirthdate: false,
         isRequired: false,
         maxLength: null,
         minLength: null,
         isAlpha: false,
-        hasPattern: null,
+        hasPattern: {
+            pattern: null,
+            message: null
+        },
         required: stringTools.required,
         max: stringTools.max,
         min: stringTools.min,
         alpha: stringTools.alpha,
         pattern: stringTools.pattern,
         alphanum: stringTools.alphanum,
+        email: stringTools.email,
+        birthdate: stringTools.birthdate,
+        ref: stringTools.ref,
         validate
     };
 };
