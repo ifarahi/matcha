@@ -6,17 +6,32 @@ const   auth = require('../../middleware/auth');
 const   cleanTag = require('../../middleware/tag_cleaner');
 const   tagController = require('../../controllers/ProfileController');
 
+
+// const   testController = require('../../helpers/tagRemover')
+const   testController = require('../../helpers/tagAdder')
+
+
 // router.get('/:tagName', cleanTag, tagController.tagExists)
-router.post('/addtag', cleanTag, tagController.addTag)
-router.post('/tagsloop', (req, res) => {
-    const tags = req.body;
-    console.log(tags)
-    console.log(Object.keys(tags))
-    console.log(Object.entries(tags))
-    // console.log(Object.entries(tags))
-//    Object.entries(tags).forEach( ([ key, value ] ) => {
-//        console.log(`object key => ${key} and it's value => ${value}`)
-//    }); 
+
+router.get('/check/:id/:tagname', async (req, res) => {
+    // console.log(req.params.id +  " " + req.params.tagname)
+    // tagController.userExists(req.params.id)
+    // tagController.getTagId(req.params.tagname)
+    // tagController.userHasTag(req.params.id, req.params.tagname)
+    // tagController.userAddTag( req.params.id, req.params.tagname )
+    // console.log(await tagController.userAddTag( req.params.id, req.params.tagname ))
+    // console.log( tagController.userDeleteTag(  0, 'leet' ) )
+    // await console.log(tagController.userDeleteTag( req.params.id, req.params.tagname ))
+    // console.log( await testController.userTagDelete( req.params.id, req.params.tagname ) );
+    console.log( await testController.userTagAdd( req.params.id, req.params.tagname ) );
+
+    res.send("CHAZZZZZE")
 })
+// router.post('/tagsloop', (req, res) => {
+//     const tags = req.body;
+//     Object.entries(tags).forEach( ([ key, value ] ) => {
+//         console.log(`object key => ${key} and it's value => ${value}`)
+//     }); 
+// })
 
 module.exports = router;
