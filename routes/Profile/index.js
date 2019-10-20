@@ -7,7 +7,9 @@ const   cleanTag = require('../../middleware/tag_cleaner');
 const   tagController = require('../../controllers/ProfileController');
 
 
-const   testController = require('../../helpers/tagHelper')
+// const   testController = require('../../helpers/tagRemover')
+const   testController = require('../../helpers/tagAdder')
+
 
 // router.get('/:tagName', cleanTag, tagController.tagExists)
 
@@ -19,8 +21,10 @@ router.get('/check/:id/:tagname', async (req, res) => {
     // tagController.userAddTag( req.params.id, req.params.tagname )
     // console.log(await tagController.userAddTag( req.params.id, req.params.tagname ))
     // console.log( tagController.userDeleteTag(  0, 'leet' ) )
-//    await console.log(tagController.userDeleteTag( req.params.id, req.params.tagname ))
-    console.log( await testController.userTagDelete( req.params.id, req.params.tagname ) );
+    // await console.log(tagController.userDeleteTag( req.params.id, req.params.tagname ))
+    // console.log( await testController.userTagDelete( req.params.id, req.params.tagname ) );
+    console.log( await testController.userTagAdd( req.params.id, req.params.tagname ) );
+
     res.send("CHAZZZZZE")
 })
 // router.post('/tagsloop', (req, res) => {
