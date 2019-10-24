@@ -81,61 +81,22 @@ module.exports = {
         })
     },
 
-    completeProfile: (req, res, next) => {
-        const { birthdate, bio, sexual_preferences } = req.body; // extract the data from the body
-        const { tag0, tag1, tag2, tag3, tag4 } = req.body.tags; // extarct the tags from the tags object
+    completeProfile_info: (req, res, next) => {
         const   errorObject = { // init the error object wich will be returned as a response in case of error
-            status: false,
-            message: ""
+            status: false
         }
-        
-        function isValidBirthdate(birthdate) {
-            const [month = null, day = null, year = null] = birthdate.split('-');
-            const nowDate = new Date();
-
-            if (day === null || month === null || year === null)
-                return (false);
-            if ((parseInt(day) !== NaN) && (parseInt(month) !== NaN) && (parseInt(year) !== NaN))
-            {
-                if ((parseInt(day) > 0 && parseInt(day) <= 31) && (parseInt(month) > 0 && parseInt(month) <= 12) && (parseInt(year) < nowDate.getFullYear()))
-                    return (true);
-                else
-                    return (false)
-            } else {
-                return (false);
-            }
+        const schema = {
+            birthdate: vivo.string().birthdate().required(),
+            bio: vivo.string().required().min(30).max(300),
+            sexual_preferences: vivo.string().alpha().min(3).max(30).required()
         }
-        
-        if (bio && sexual_preferences && tag0 && tag1 && tag2 && tag3 && tag4) {
 
-            if (!isValidBirthdate(birthdate)) // if the value is not a number
-                errorObject.message = "invalid birthdate";
-            if (bio.trim().length < 30)
-                errorObject.message = "at least you should write a 30 characters";
-            if (bio.trim().length > 599) 
-                errorObject.message = "you cant write more than 600 characters";
-            if (sexual_preferences.trim().length < 3)
-                errorObject.message = "Invalid choice";
-            if (tag0.trim().length < 3)
-                errorObject.message = "Invalid tag";
-            if (tag1.trim().length < 3)
-                errorObject.message = "Invalid tag";
-            if (tag2.trim().length < 3)
-                errorObject.message = "Invalid tag";
-            if (tag3.trim().length < 3)
-                errorObject.message = "Invalid tag";
-            if (tag4.trim().length < 3)
-                errorObject.message = "Invalid tag";
-
-            if (!errorObject.message) // if error message is empty thats mean all test has been passed with no error so pass controll to the next middlware 
-                next();
-            else // end up the request and send back the error object
-                res.json(errorObject);
-
-        } else {
-            errorObject.message = "all informations are required";
+        vivo.validate(schema, req.body)
+        .then(body => next())
+        .catch((error) => {
+            errorObject.details = error.details;
             res.json(errorObject);
-        }
+        })
     },
 
     changePassword: (req, res, next) => {
@@ -155,8 +116,11 @@ module.exports = {
         })
     },
 
+    uploadImage: (req, res, next) => {
+        
+    },
+
     changePersonalInformations: (req, res, next) => {
-        const   { username, firstname, lastname, email, gender, birthdate, sexual_preferences, bio } = req.body; // extract the information sent in the request
         const   old = req.body.decodedObject; // the old information from the user row (added by the auth middleware)
         const   errorObject = { // init the error object wich will be returned as a response in case of error
             status: false

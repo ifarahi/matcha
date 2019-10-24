@@ -22,8 +22,6 @@ router.get('/forgetPassword/:email', validation.forgetPassword, userController.f
 router.get('/isValidToken/:token', userController.isValidToken); // verify if the given token is valid (belong to a user)
 router.post('/reinitializePassword', validation.reinitializePassword, userController.reinitializePassword); // set new password to the user with the give token
 
-router.post('/completeProfile', auth, validation.completeProfile, userController.completeProfile); // check if the user is login , validate the form, save the data
-
 router.post('/setting/changePassword', auth, validation.changePassword, userController.changePassword); // change user password after login
 
 router.post('/setting/changePersonalInformations', auth, validation.changePersonalInformations, userController.changePersonalInformations);

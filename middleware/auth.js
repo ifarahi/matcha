@@ -20,7 +20,7 @@ module.exports = (req, res, next) => { // take the request and check the header 
     try { // Now verify the token if is valid its return the payload object if ! its throw an exception
         jwt.verify(token, process.env.PRIVATE_KEY, (error, decoded) => {
             if (!error) { // if there is no error its a valid token
-                req.body.decodedObject = decoded; // put the decoded object (Payload) in the request body
+                req.decodedObject = decoded; // put the decoded object (Payload) in the request body
                 next(); // call to the next middleware
             } else {
                 errorObject.message = 'Access denied. Invalid token provided';

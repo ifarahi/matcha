@@ -233,47 +233,10 @@ module.exports = {
             res.send(`somting went wrong error: ${error}`);
         }
     },
-
-    completeProfile: async (req, res) => { // complete the user profile to be able to use the app 
-        const   { birthdate, bio, sexual_preferences, tags } = req.body; // extract data from the request body
-        const   userRow = req.body.decodedObject; // extract the user information from the decodedObject added by the auth middleware
-        const   data = { // init the data that will be inserted in the database
-            birthdate,
-            bio,
-            sexual_preferences,
-            id: req.body.decodedObject.id // extract the user id from the decodedObject (the object returned after decoding the auth-token wich contain the user data)
-        }
-        const responseObject = { // init the response object to be sent back 
-            status: true,
-            message: "Your profile is completed"
-        }
-
-        // if the user account is not verified cannot complete profile end the request
-        if (userRow.is_verified < 1) { // check if the user account is not verified
-            responseObject.message = "You need to verify your account to complete your profile";
-            res.json(responseObject);
-            return;
-        }
-
-        const tgs = Object.values(tags); // convert the tags object to an array of tags to use foreach method on it
-        try {
-            userModel.completeProfile(data); // insert the user data and set the (its_first_visit = 0) to indicate it no longer the first visit
-            tgs.forEach(tag => { // loop through the tags array and for every tag save it into the tags table
-                userModel.insertUserTag({ // takes an object contain the user id and the tag
-                        id: req.body.decodedObject.id, // the user id from the decodedOject (added by the auth middleware after decoding the auth-token)
-                        tag
-                    }); 
-            });
-            res.json(responseObject);
-        } catch (error) {
-            res.send(`something went wrong: ${error}`);
-            return;
-        }
-    },
-
+    
     changePassword: async (req, res) => { // change user password 
         const { oldPassword, newPassword } = req.body; // extract the data from the request body
-        const { id } = req.body.decodedObject; // extract the user id from the decoded object added by the auth middleware
+        const { id } = req.decodedObject; // extract the user id from the decoded object added by the auth middleware
         const data = { // the data object wich will used in updateUserPassword method 
             id,
             password: await password_helper.password_hash(newPassword), // hash the password before insert it into the database
@@ -303,7 +266,7 @@ module.exports = {
 
     changePersonalInformations: async (req, res) => { // update a user personal information (only login users)
         const   { username, firstname, lastname, email, gender, age, sexual_preferences, bio } = req.body; // extract the information sent in the request
-        const   old = req.body.decodedObject; // the old information from the user row (added by the auth middleware)
+        const   old = req.decodedObject; // the old information from the user row (added by the auth middleware)
         let     change = 0; // this change will be 1 if the user has changed at least one of their personal information
         const   responseObject = { // init the responseObject to be sent back
             status: false,
