@@ -362,6 +362,13 @@ module.exports = {
         }
     },
 
+    authenticate : async (req, res) => { // verify if the token is valid 
+        res.json({
+            status : true,
+            message : 'Your authentication token is valid'
+        })
+    },
+
     testUser: async (req, res) => {
         const {username} = req.body;
         const userRow = 

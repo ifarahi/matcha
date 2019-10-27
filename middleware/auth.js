@@ -5,7 +5,11 @@ const   jwt    = require('jsonwebtoken');
 */
 
 module.exports = (req, res, next) => { // take the request and check the header if its contain a valid token
-    const   token = req.header('x-auth-token'); // extract the token from the header
+    const authorization = req.header('Authorization'); // extract the token from the header
+    let token;
+
+    if ( authorization ) // checks if the autorization header is set
+        token = authorization.split(' ')[1]
     const   errorObject = { // the error object ro treturn in case of error
         status: false,
         message: ""
