@@ -1,5 +1,6 @@
 const tagsModel = require('../models/Tags.js');
 const profileModel = require('../models/Profile');
+const tagAdder = require('../helpers/tagAdder');
 const fs = require('fs');
 
 module.exports = {
@@ -34,7 +35,15 @@ module.exports = {
     },
 
     completeProfile_tags: async (req, res) => {
-        
+        if ( Object.keys(req.body).length === 0 )
+            res.json({
+                status: false,
+                message: "Invalid tags list" 
+            })
+        await Object.keys( req.body ).map( Element => {
+            tagAdder.userTagAdd( 1, req.body[Element] )
+        })
+        res.send({status : true})
     },
 
     completeProfile_images: async (req, res) => {

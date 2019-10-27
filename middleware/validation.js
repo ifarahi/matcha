@@ -142,5 +142,26 @@ module.exports = {
             errorObject.details = error.details;
             res.json(errorObject);
         })
+    },
+
+    tags: async (req, res, next) => {
+        //Tags object needed for vivo validate
+        const tags = {
+            tag: ""
+        }
+        //Tag schema
+        const schema = {
+            tag: vivo.string().pattern(/^[A-z0-9]{2,10}$/, 'Tags can only contain between 2 and 10 alphanumercial characteres').required()
+        }
+
+        //This loops over objects in the req.body and validates them using vivo and its schema if a tag is invalid it gets removed from the request body
+        await Object.keys(req.body).map( Element => {
+            tags.tag = req.body[Element] //Assigning the Element value to tag so we can test it using vivo
+            vivo.validate(schema, tags)
+                .catch((error) => { //If tag is invalid then we remove it from the req.body
+                    delete req.body[Element]
+            })
+        })
+        next()
     }
 }

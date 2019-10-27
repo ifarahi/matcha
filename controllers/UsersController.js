@@ -144,11 +144,11 @@ module.exports = {
         }
 
         const User = _.pick(userRow, ['id', 'username', 'firstname', 'lastname', 'age', 'gender', 'bio', 'sexual_preferences', 'email', 'longitude', 'latitude', 'is_first_visit']); //usng lodash to pick only needed informations
-        const token = jwt.sign(User, process.env.PRIVATE_KEY); // sign the user token with the private key
+        const token = await jwt.sign(User, process.env.PRIVATE_KEY); // sign the user token with the private key
         responseObject.status = true; // set the response status to true (user is currectly logged in)
         responseObject.user = User; // include the user data in the response object
-        res.header('x-auth-token', token) // set the user token on the header
-            .json(responseObject); // send the user row in the body
+        responseObject.token = token // set the user token on the header
+            res.json(responseObject); // send the user row in the body
     },
 
     forgetPassword: async (req, res) => { // @forgetPassword responsable for sending a link to reinitialize account password

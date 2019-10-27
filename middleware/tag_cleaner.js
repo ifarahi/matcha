@@ -3,14 +3,9 @@
 */
 
 module.exports = (req, res, next) => {
-    if ( req.method == "GET" ){
-        req.params.tagName = req.params.tagName.toString()
-        req.params.tagName = req.params.tagName.trim().toLowerCase()
-    }
-    else if ( req.method == "POST" )
-    {
-        req.body.tagname = req.body.tagname.toString()
-        req.body.tagname = req.body.tagname.trim().toLowerCase()
-    }
+    Object.keys(req.body).map(Element => {
+        req.body[Element] = req.body[Element].toString()
+        req.body[Element] = req.body[Element].trim().toLowerCase()
+    })
     next()
 }

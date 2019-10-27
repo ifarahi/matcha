@@ -57,7 +57,6 @@ userTagsChecker = async ( userId, tagId ) => {
         return ( result );
 }
 
-
 userTagAdd = async ( targetId, tagId ) => {
     try {
         await tagsModel.userTagAdd( targetId, tagId );
@@ -73,8 +72,6 @@ userTagAdd = async ( targetId, tagId ) => {
     }
 }
 
-module.exports = {
-    userTagAdd : async( userId, tagName ) => {
-        return( await userChecker( userId, tagName ));
-    }
+module.exports.userTagAdd = async ( userId, tagName ) => {
+    return ( await userChecker( userId, tagName ));
 }
