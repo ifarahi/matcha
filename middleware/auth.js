@@ -9,7 +9,7 @@ module.exports = (req, res, next) => { // take the request and check the header 
     let token;
 
     if ( authorization ) // checks if the autorization header is set
-        token = authorization.split(' ')[1]
+        token = authorization.split(' ')[1];
     const   errorObject = { // the error object ro treturn in case of error
         status: false,
         message: ""

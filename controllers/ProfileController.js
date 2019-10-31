@@ -8,12 +8,12 @@ module.exports = {
 
     completeProfile_info: async (req, res) => { // complete the user profile to be able to use the app 
         const   { birthdate, bio, sexual_preferences } = req.body; // extract data from the request body
-        const   userRow = req.body.decodedObject; // extract the user information from the decodedObject added by the auth middleware
+        const   userRow = req.decodedObject; // extract the user information from the decodedObject added by the auth middleware
         const   data = { // init the data that will be inserted in the database
             birthdate,
             bio,
             sexual_preferences,
-            id: req.body.decodedObject.id // extract the user id from the decodedObject (the object returned after decoding the auth-token wich contain the user data)
+            id: req.decodedObject.id // extract the user id from the decodedObject (the object returned after decoding the auth-token wich contain the user data)
         }
         const responseObject = { // init the response object to be sent back 
             status: true
