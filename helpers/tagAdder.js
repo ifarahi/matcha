@@ -73,5 +73,9 @@ userTagAdd = async ( targetId, tagId ) => {
 }
 
 module.exports.userTagAdd = async ( userId, tagName ) => {
-    return ( await userChecker( userId, tagName ));
+
+    return new Promise ( async ( resolve, reject ) => {
+        const result = await userChecker( userId, tagName );
+        resolve( result );
+    }) 
 }

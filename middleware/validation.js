@@ -151,7 +151,7 @@ module.exports = {
         }
         //Tag schema
         const schema = {
-            tag: vivo.string().pattern(/^[A-z0-9]{2,10}$/, 'Tags can only contain between 2 and 10 alphanumercial characteres').required()
+            tag: vivo.string().pattern(/^[a-z0-9]{2,10}$/, 'Tags can only contain between 2 and 10 alphanumercial characteres').required()
         }
 
         //This loops over objects in the req.body and validates them using vivo and its schema if a tag is invalid it gets removed from the request body

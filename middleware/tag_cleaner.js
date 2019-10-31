@@ -4,8 +4,22 @@
 
 module.exports = (req, res, next) => {
     Object.keys(req.body).map(Element => {
-        req.body[Element] = req.body[Element].toString()
-        req.body[Element] = req.body[Element].trim().toLowerCase()
+        if ( req.body[Element] === null )
+            res.json({
+                status: false,
+                message: 'invalid request'
+            })
+        else {
+            try{
+                req.body[Element] = req.body[Element].toString()
+                req.body[Element] = req.body[Element].trim().toLowerCase()
+            } catch ( err ) {
+                res.json({
+                    status: false,
+                    message: 'invalid request'
+                })
+            }
+        }
     })
     next()
 }

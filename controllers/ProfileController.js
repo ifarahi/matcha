@@ -1,6 +1,7 @@
 const tagsModel = require('../models/Tags.js');
 const profileModel = require('../models/Profile');
 const tagAdder = require('../helpers/tagAdder');
+const tagRemover = require('../helpers/tagRemover');
 const fs = require('fs');
 
 module.exports = {
@@ -34,16 +35,46 @@ module.exports = {
         }
     },
 
-    completeProfile_tags: async (req, res) => {
+    completeProfile_tags_add: async (req, res) => {
         if ( Object.keys(req.body).length === 0 )
             res.json({
                 status: false,
-                message: "Invalid tags list" 
+                message: "Empty request" 
             })
-        await Object.keys( req.body ).map( Element => {
-            tagAdder.userTagAdd( 1, req.body[Element] )
+        await Promise.all (Object.keys( req.body ).map( async Element => {
+            await tagAdder.userTagAdd( 1, req.body[Element] )
+        }));
+        result = await tagsModel.userGetTags(1);
+        res.send({
+            status : true,
+            result
         })
-        res.send({status : true})
+    },
+
+    completeProfile_tags_delete: async (req, res) => {
+        if ( Object.keys(req.body).length === 0 )
+            res.json({
+                status: false,
+                message: "Empty request" 
+            })
+        await Promise.all (Object.keys( req.body ).map( async Element => {
+            await tagRemover.userTagDelete( 1, req.body[Element] )
+        }));
+        result = await tagsModel.userGetTags(1);
+        res.send({
+            status : true,
+            result
+        })
+    },
+
+    completeProfile_tags_get: async (req, res) => {
+        try {
+            let id = 1;
+            const result = await tagsModel.userGetTags(id);
+            res.send( result );
+        } catch ( err ) {
+            res.send( [] ) 
+        }
     },
 
     completeProfile_images: async (req, res) => {

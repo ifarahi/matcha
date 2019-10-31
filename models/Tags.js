@@ -73,5 +73,14 @@ module.exports = {
                 else resolve(result);
             });
         });
+    },
+
+    userGetTags : (userid) => {
+        return new Promise((resolve, reject) => {
+            database.query('Select tags.name from tags join user_tags on tags.id = user_tags.tag_id where user_tags.user_id = ?', userid, (error, result) => {
+                if (error) reject(error);
+                else resolve(result);
+            });
+        });
     }
 }

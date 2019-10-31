@@ -1,10 +1,10 @@
 const tagsModel = require('../models/Tags.js');
 const { tagExists, tagGetId, userExists, userHasTag, userTagId } = require('./tagCheckers') 
 
-userChecker = async ( userId, tagName ) => {
+rUserChecker = async ( userId, tagName ) => {
     const result = await userExists( userId );
     if ( result.status === true && result.result !== 0 )
-        return ( await tagChecker( userId, tagName ) );
+        return ( await rTagChecker( userId, tagName ) );
     else if ( result.status === true && result.result === 0 )
         return ({
             status : false,
@@ -14,10 +14,10 @@ userChecker = async ( userId, tagName ) => {
         return ( result ); 
 };
 
-tagChecker = async ( userId, tagName ) => {
+rTagChecker = async ( userId, tagName ) => {
     const result = await tagExists( tagName ); 
     if ( result.status === true && result.result !== 0 )
-        return ( await tagIdResolver( userId, tagName ) );
+        return ( await rTagIdResolver( userId, tagName ) );
     else if ( result.status === true && result.result === 0 )
         return ({
             status : false,
@@ -27,18 +27,18 @@ tagChecker = async ( userId, tagName ) => {
         return ( result ); 
 };
 
-tagIdResolver = async ( userId, tagName ) => {
+rTagIdResolver = async ( userId, tagName ) => {
     const result = await tagGetId( tagName );
     if ( result.status === true )
-        return ( await userTagsChecker( userId, result.result ) );
+        return ( await rUserTagsChecker( userId, result.result ) );
     else 
         return ( result );
 }
 
-userTagsChecker = async ( userId, tagId ) => {
+rUserTagsChecker = async ( userId, tagId ) => {
     const result = await userHasTag( userId, tagId );
     if ( result.status === true && result.result !== 0 )
-        return ( await targetIdResolver( userId, tagId ) );
+        return ( await rTargetIdResolver( userId, tagId ) );
     else if ( result.status === true && result.result === 0 )
         return ({
             status : false,
@@ -48,15 +48,15 @@ userTagsChecker = async ( userId, tagId ) => {
         return ( result );
 }
 
-targetIdResolver = async ( userId, tagId ) => {
+rTargetIdResolver = async ( userId, tagId ) => {
     const result = await userTagId( userId, tagId )
     if ( result.status === true )
-        return (  await targetRemover( result.result ) );
+        return (  await rTargetRemover( result.result ) );
     else 
         return ( result );
 }
 
-targetRemover = async ( targetId ) => {
+rTargetRemover = async ( targetId ) => {
     try {
         await tagsModel.userDeleteTag( targetId );
         return ({
@@ -73,6 +73,9 @@ targetRemover = async ( targetId ) => {
 
 module.exports = {
     userTagDelete : async( userId, tagName ) => {
-        return( await userChecker( userId, tagName ));
+        return new Promise ( async ( resolve, reject ) => {
+            const result = await rUserChecker( userId, tagName );
+            resolve( result );
+        }) 
     }
 }
