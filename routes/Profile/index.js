@@ -17,8 +17,10 @@ router.post('/completeProfile_images', auth,
     ProfileController.completeProfile_images);
 router.post('/setProfilePicture', auth, ProfileController.setProfilePicture);
 router.post('/deleteUserImage', auth, ProfileController.deleteUserImage);
-router.post('/completeProfileTags/add', tagCleaner, validation.tags, ProfileController.completeProfile_tags_add);
-router.post('/completeProfileTags/delete', tagCleaner, validation.tags, ProfileController.completeProfile_tags_delete);
-router.get('/completeProfileTags/get', ProfileController.completeProfile_tags_get);
+router.post('/completeProfileTags/add', auth, tagCleaner, validation.tags, ProfileController.completeProfile_tags_add);
+router.post('/completeProfileTags/delete', auth, tagCleaner, validation.tags, ProfileController.completeProfile_tags_delete);
+router.get('/completeProfileTags/get/count', auth, ProfileController.ompleteProfile_tags_getCount);
+router.get('/completeProfileTags/get', auth, ProfileController.completeProfile_tags_get);
+router.get('/completeProfileTags/get/all', auth, ProfileController.completeProfile_tags_getAll);
 
 module.exports = router;
