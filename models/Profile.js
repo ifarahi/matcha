@@ -5,7 +5,7 @@ module.exports = {
     completeProfile_info: (data) => {
         return new Promise((resolve, reject) => { 
             const   { birthdate, bio, sexual_preferences, id } = data; // using objects destructuring to extract only needed informations from the request body 
-            const   sql = 'UPDATE users SET birthdate = ?, bio = ?, sexual_preferences = ?, is_verified = 2 WHERE id = ?'; // prepare the statement using positional params '?'
+            const   sql = 'UPDATE users SET birthdate = ?, bio = ?, sexual_preferences = ?, is_first_visit = 2 WHERE id = ?'; // prepare the statement using positional params '?'
             const   values = [ birthdate, bio, sexual_preferences, id]; // values to be binded the first '?' will be replaced with the first element in the array and so on
             database.query(sql, values, (error, result) => {
                 if (error)
@@ -101,4 +101,16 @@ module.exports = {
             });
         });
     },
+
+    completeUserProfile: (id) => {
+        return new Promise((resolve, reject) => {
+            const sql = 'UPDATE users SET is_first_visit = 0 WHERE id = ?';
+            database.query(sql, id, (error, result) => {
+                if (error)
+                    reject(error);
+                else 
+                    resolve(true);
+            });
+        });
+    }
 }

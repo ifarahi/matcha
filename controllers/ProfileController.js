@@ -223,5 +223,48 @@ module.exports = {
         } catch (error) {
             res.json(error);
         }
+    },
+
+    fetchCompleteProfileProgress: async (req, res) => {
+        const {id} = req.decodedObject;
+        responseObject = {
+            status: true,
+            progress: null
+        }
+
+        try {
+            const userRow = await profileModel.fetchUserWithId(id);
+            responseObject.progress = userRow.is_first_visit;
+            res.json(responseObject);
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.error = error;
+            res.json(error);
+        }
+    },
+
+    completeUserProfile: async (req, res) => {
+        const {id} = req.decodedObject;
+        const responseObject = {
+            status: true,
+            message: ''
+        }
+
+        try {
+            const {images} = await profileModel.countUserImages(id);
+            if (images > 0) {
+                await profileModel.completeUserProfile(id);
+                responseObject.message = "Profile completed";
+                res.json(responseObject);
+            } else {
+                responseObject.status = false;
+                responseObject.message = 'Uncompleted Profile';
+                res.json(responseObject);
+            }
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = error;
+            res.json(responseObject);
+        }
     }
 }
