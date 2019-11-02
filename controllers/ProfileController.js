@@ -41,10 +41,11 @@ module.exports = {
                 status: false,
                 message: "Empty request" 
             })
+        let id = ( Number.isInteger( req.decodedObject.id )) ? req.decodedObject.id : -1;
         await Promise.all (Object.keys( req.body ).map( async Element => {
-            await tagAdder.userTagAdd( 1, req.body[Element] )
+            await tagAdder.userTagAdd( id, req.body[Element] )
         }));
-        result = await tagsModel.userGetTags(1);
+        result = await tagsModel.userGetTags( id );
         res.send({
             status : true,
             result
@@ -57,10 +58,11 @@ module.exports = {
                 status: false,
                 message: "Empty request" 
             })
+        let id = ( Number.isInteger( req.decodedObject.id )) ? req.decodedObject.id : -1;
         await Promise.all (Object.keys( req.body ).map( async Element => {
-            await tagRemover.userTagDelete( 1, req.body[Element] )
+            await tagRemover.userTagDelete( id, req.body[Element] )
         }));
-        result = await tagsModel.userGetTags(1);
+        result = await tagsModel.userGetTags( id );
         res.send({
             status : true,
             result
@@ -69,11 +71,30 @@ module.exports = {
 
     completeProfile_tags_get: async (req, res) => {
         try {
-            let id = 1;
-            const result = await tagsModel.userGetTags(id);
+            let id = ( Number.isInteger( req.decodedObject.id )) ? req.decodedObject.id : -1;
+            const result = await tagsModel.userGetTags( id );
             res.send( result );
         } catch ( err ) {
             res.send( [] ) 
+        }
+    },
+
+    completeProfile_tags_getAll: async ( req, res ) => {
+        try {
+            const result = await tagsModel.userGetAllTags();
+            res.send( result );
+        } catch ( err ) {
+            res.send( [] ) 
+        }
+    },
+
+    ompleteProfile_tags_getCount: async ( req, res ) => {
+        try {
+            let id = ( Number.isInteger( req.decodedObject.id )) ? req.decodedObject.id : -1;
+            const result = await tagsModel.userCountTags( id );
+            res.send( result );
+        } catch ( err ) {
+            res.send( 0 ) 
         }
     },
 
