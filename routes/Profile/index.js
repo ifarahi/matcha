@@ -16,6 +16,7 @@ router.post('/completeProfile_images', auth,
     uploadEngine.validate,
     ProfileController.completeProfile_images);
 router.post('/setProfilePicture', auth, ProfileController.setProfilePicture);
+router.get('/getUserImages/:id', auth, ProfileController.getUserImages);
 router.post('/deleteUserImage', auth, ProfileController.deleteUserImage);
 router.post('/completeProfileTags/add', tagCleaner, validation.tags, ProfileController.completeProfile_tags_add);
 router.post('/completeProfileTags/delete', tagCleaner, validation.tags, ProfileController.completeProfile_tags_delete);

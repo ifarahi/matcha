@@ -88,14 +88,39 @@ module.exports = {
         }
         if (data.image !== undefined) {
             try {
-                const result = await profileModel.saveUserImage(data);
+                await profileModel.saveUserImage(data);
                 responseObject.message = 'Image has been Uploaded';
-                res.json(result);
+                res.json(responseObject);
             } catch (error) {
                 responseObject.status = false;
                 responseObject.message = error;
                 res.json(error);
             }
+        }
+    },
+
+    getUserImages: async (req, res) => {
+        const {id} = req.params;
+        const responseObject = {
+            status: true,
+            images: null
+        }
+        try {
+            const userExist = await profileModel.fetchUserWithId(id);
+            if (userExist === undefined) {
+                responseObject.status = false;
+                responseObject.error = 'Bad request';
+                res.json(responseObject);
+            } else {
+                const result = await profileModel.getUserImages(id);
+                const images = result.map(elem => { return (elem.image); });
+                responseObject.images = images;
+                res.json(responseObject);
+            }
+        } catch (error) {
+            responseObject.status = false;
+            res.error = error;
+            res.json(responseObject);
         }
     },
 
@@ -169,7 +194,7 @@ module.exports = {
             const imageCount = await profileModel.countUserImages(user_id);
             if (imageCount.images >= 5)
             {
-                errorObject.message = 'you have reached the maximum you cant upload more then 5 picture';
+                errorObject.message = 'You have reached the maximum, you cant upload more then 5 pictures';
                 res.json(errorObject);
             } else {
                 next();

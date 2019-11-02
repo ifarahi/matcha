@@ -5,7 +5,7 @@ module.exports = {
     completeProfile_info: (data) => {
         return new Promise((resolve, reject) => { 
             const   { birthdate, bio, sexual_preferences, id } = data; // using objects destructuring to extract only needed informations from the request body 
-            const   sql = 'UPDATE users SET birthdate = ?, bio = ?, sexual_preferences = ? WHERE id = ?'; // prepare the statement using positional params '?'
+            const   sql = 'UPDATE users SET birthdate = ?, bio = ?, sexual_preferences = ?, is_verified = 2 WHERE id = ?'; // prepare the statement using positional params '?'
             const   values = [ birthdate, bio, sexual_preferences, id]; // values to be binded the first '?' will be replaced with the first element in the array and so on
             database.query(sql, values, (error, result) => {
                 if (error)
@@ -36,6 +36,18 @@ module.exports = {
             const sql = 'INSERT INTO images (user_id, image) VALUES (?, ?)';
             const values = [user_id, image];
             database.query(sql, values, (error, result) => {
+                if (error)
+                    reject(error);
+                else
+                    resolve(true);
+            });
+        });
+    },
+
+    getUserImages: (id) => {
+        return new Promise((resolve, reject) => {
+            const sql = 'SELECT * FROM images WHERE user_id = ?';
+            database.query(sql, id, (error, result) => {
                 if (error)
                     reject(error);
                 else
@@ -79,5 +91,14 @@ module.exports = {
                     resolve(result[0]);
             });
         });
-    }
+    },
+
+    fetchUserWithId: (id) => {
+        return new Promise((resolve, reject) => {
+            database.query('SELECT * FROM users WHERE id = ?', id, (error, result) => {
+                if (error) reject(error);
+                resolve(result[0]);
+            });
+        });
+    },
 }
