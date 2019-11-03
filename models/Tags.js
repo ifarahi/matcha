@@ -75,7 +75,7 @@ module.exports = {
         });
     },
 
-    userGetTags : ( userid ) => {
+    userGetTags : ( userid ) => { // Gets the list of the user tags
         return new Promise( ( resolve, reject ) => {
             database.query('Select tags.name from tags join user_tags on tags.id = user_tags.tag_id where user_tags.user_id = ?', userid, (error, result) => {
                 if (error) reject(error);
@@ -84,7 +84,7 @@ module.exports = {
         });
     },
 
-    userGetAllTags : () => {
+    userGetAllTags : () => { //  Gets the list of all the tags that exists in the database
         return new Promise( ( resolve, reject ) => {
             database.query('Select name from tags ', (error, result) => {
                 if (error) reject(error);
@@ -93,12 +93,24 @@ module.exports = {
         });
     },
 
-    userCountTags : ( user_id ) => {
+    userCountTags : ( user_id ) => {// Gets the count of the tags list of a given user
         return new Promise( ( resolve, reject ) => {
             database.query('Select COUNT(*) AS Total from user_tags WHERE user_id = ?', user_id, (error, result) => {
                 if (error) reject(error);
                 else resolve(result);
             });
         });
-    }
+    },
+
+    userTagsFinish : ( user_id ) => {//Set the 1st visit to 3 which mean the 3rd step 
+        return new Promise((resolve, reject) => {
+            const sql = 'UPDATE users SET is_first_visit = 3 WHERE id = ?';
+            database.query(sql, user_id, (error, result) => {
+                if (error)
+                    reject(error);
+                else 
+                    resolve(true);
+            });
+        });
+    } 
 }

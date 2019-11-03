@@ -104,7 +104,7 @@ module.exports = {
 
     completeUserProfile: (id) => {
         return new Promise((resolve, reject) => {
-            const sql = 'UPDATE users SET is_first_visit = 0 WHERE id = ?';
+            const sql = 'UPDATE users SET is_first_visit = 3 WHERE id = ?';
             database.query(sql, id, (error, result) => {
                 if (error)
                     reject(error);

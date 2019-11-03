@@ -59,6 +59,22 @@ module.exports = {
                 message: "Empty request" 
             })
         let id = ( Number.isInteger( req.decodedObject.id )) ? req.decodedObject.id : -1;
+        try {
+            let checker = await tagsModel.userCountTags( id );  
+            if ( checker[0].Total <= 1 ) {
+                res.send({
+                    status : false,
+                    result : "You must have one tag at least"
+                })
+                return;
+            }
+        } catch ( err ) {
+            res.send({
+                status : false,
+                result : "Couldn't check your tags list"
+            })
+            return;
+        }
         await Promise.all (Object.keys( req.body ).map( async Element => {
             await tagRemover.userTagDelete( id, req.body[Element] )
         }));
@@ -67,6 +83,7 @@ module.exports = {
             status : true,
             result
         })
+        return;
     },
 
     completeProfile_tags_get: async (req, res) => {
@@ -95,6 +112,42 @@ module.exports = {
             res.send( result );
         } catch ( err ) {
             res.send( 0 ) 
+        }
+    },
+
+    ompleteProfile_tags_validate: async ( req, res ) => {
+        let id = ( Number.isInteger( req.decodedObject.id )) ? req.decodedObject.id : -1;
+        let count = await tagsModel.userCountTags( id );  
+        if ( count[0].Total < 1 ) {
+            res.send({
+                status : false,
+                result : "Your have one tag atleast to move to the next step"
+            })
+            return ;
+        }
+        const userRow = await profileModel.fetchUserWithId(id);
+        let step = userRow.is_first_visit;
+        if ( step !== 2 ){
+            res.send({
+                status : false,
+                result : "You must fill your bio and sexual preferences before jumping to this step"
+            })
+            return ;
+        } else {
+            try {
+                await tagsModel.userTagsFinish( id );
+                res.send({
+                    status : true,
+                    result : "Your tags have been saved please move to the next step"
+                })
+                return ;
+            } catch ( err ) {
+                res.send({
+                    status : false,
+                    result : "Something went wrong"
+                })
+                return ;
+            }
         }
     },
 

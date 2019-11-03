@@ -23,7 +23,8 @@ router.post('/completeProfileTags/delete', auth, tagCleaner, validation.tags, Pr
 router.get('/completeProfileTags/get/count', auth, ProfileController.ompleteProfile_tags_getCount);
 router.get('/completeProfileTags/get', auth, ProfileController.completeProfile_tags_get);
 router.get('/completeProfileTags/get/all', auth, ProfileController.completeProfile_tags_getAll);
-router.get('/userProgress', auth, ProfileController.fetchCompleteProfileProgress);
+router.get('/completeProfileTags/get/finish', auth, ProfileController.ompleteProfile_tags_validate);
+router.get('/completeprofile/progress', auth, ProfileController.fetchCompleteProfileProgress);
 router.get('/completeUserProfile', auth, ProfileController.completeUserProfile);
 
 module.exports = router;
