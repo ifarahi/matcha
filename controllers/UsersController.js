@@ -144,7 +144,7 @@ module.exports = {
             }
         }
 
-        const User = _.pick(userRow, ['id', 'username', 'firstname', 'lastname', 'age', 'gender', 'bio', 'sexual_preferences', 'email', 'longitude', 'latitude', 'is_first_visit']); //usng lodash to pick only needed informations
+        const User = _.pick(userRow, ['id', 'username', 'firstname', 'lastname', 'age', 'gender', 'bio', 'profile_picture', 'sexual_preferences', 'email', 'longitude', 'latitude', 'is_first_visit']); //usng lodash to pick only needed informations
         const token = await jwt.sign(User, process.env.PRIVATE_KEY); // sign the user token with the private key
         responseObject.status = true; // set the response status to true (user is currectly logged in)
         responseObject.user = User; // include the user data in the response object

@@ -200,7 +200,7 @@ module.exports = {
 
     deleteUserImage: async (req, res) => {
         const data = {
-            id: req.decodedObject.id,
+            user_id: req.decodedObject.id,
             image: req.body.image
         }
         const responseObject = {
