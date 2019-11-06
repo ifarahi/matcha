@@ -28,5 +28,6 @@ router.post('/setting/changePersonalInformations', auth, validation.changePerson
 
 //this route checks if the jwt is valid
 router.post('/authenticate', auth, userController.authenticate);
+router.get('/updateAuthToken', auth, userController.updateAuthToken);
 
 module.exports = router;

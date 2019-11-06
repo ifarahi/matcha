@@ -370,10 +370,25 @@ module.exports = {
         })
     },
 
-    testUser: async (req, res) => {
-        const {username} = req.body;
-        const userRow = 
-        res.send(userRow.email);
+    updateAuthToken: async (req, res) => {
+        const {username} = req.decodedObject;
+        const responseObject = {
+            status: true,
+            message: ''
+        }
+
+        try {
+            const userRow = await userModel.fetchUserWithUsername(username); //get the user email with the given username
+            const User = _.pick(userRow, ['id', 'username', 'firstname', 'lastname', 'age', 'gender', 'bio', 'profile_picture', 'sexual_preferences', 'email', 'longitude', 'latitude', 'is_first_visit']); //usng lodash to pick only needed informations
+            const token = await jwt.sign(User, process.env.PRIVATE_KEY); // sign the user token with the private key
+            responseObject.user = User; // include the user data in the response object
+            responseObject.token = token // set the user token on the header
+            res.json(responseObject); // send the user row in the body
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = error;
+            res.json(responseObject);
+        }
     }
 
 }

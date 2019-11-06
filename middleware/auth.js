@@ -29,9 +29,10 @@ module.exports = (req, res, next) => { // take the request and check the header 
                 const userExist = await userModel.usernameExists(decoded.username);
                 if (userExist > 0)
                     next(); // call to the next middleware
-                else
-                errorObject.message = 'Access denied. Token expired';
-                res.json(errorObject);
+                else {
+                    errorObject.message = 'Access denied. Token expired';
+                    res.json(errorObject);
+                }
             } else {
                 errorObject.message = 'Access denied. Invalid token provided';
                 res.json(errorObject);

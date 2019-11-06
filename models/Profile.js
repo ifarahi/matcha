@@ -25,7 +25,7 @@ module.exports = {
                 if (error)
                     reject(error);
                 else
-                    resolve(true);
+                    resolve(result);
             });
         });
     },

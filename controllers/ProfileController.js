@@ -216,14 +216,14 @@ module.exports = {
                     const {result} = await profileModel.isProfilePicture(data);
                     if (result > 0) {
                         await profileModel.deleteUserImage(data);
-                        await profileModel.setUserProfilePicture({user_id: data.id, image: 'defaultProfilePicture.png'});
-                        fs.unlink(`images/${data.image}`, () => {
+                        await profileModel.setUserProfilePicture({user_id: data.user_id, image: 'defaultProfilePicture.png'});
+                        fs.unlink(`public/images/${data.image}`, () => {
                             responseObject.message = 'Image has been deleted';
                             res.json(responseObject);
                         });
                     } else {
                         await profileModel.deleteUserImage(data);
-                        fs.unlink(`images/${data.image}`, () => {
+                        fs.unlink(`public/images/${data.image}`, () => {
                             responseObject.message = 'Image has been deleted';
                             res.json(responseObject);
                         });
