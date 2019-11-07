@@ -153,9 +153,9 @@ module.exports = {
 
     updateUserPersonalInformations: (data) => { // update the user personal informations
         return new Promise((resolve, reject) => { 
-            const   { id, firstname, lastname, username, gender, email, age, bio, sexual_preferences } = data; // using objects destructuring to extract only needed informations from the request body 
-            const   sql = 'UPDATE users SET firstname = ?, lastname = ?, username = ?, gender = ?, email = ?, age = ?, bio = ?, sexual_preferences = ? WHERE id = ?'; // prepare the statement using positional params '?'
-            const   values = [ firstname, lastname, username, gender, email, age, bio, sexual_preferences, id]; // values to be binded the first '?' will be replaced with the first element in the array and so on
+            const   { id, firstname, lastname, username, gender, email, birthdate, bio, sexual_preferences } = data; // using objects destructuring to extract only needed informations from the request body 
+            const   sql = 'UPDATE users SET firstname = ?, lastname = ?, username = ?, gender = ?, email = ?, birthdate = ?, bio = ?, sexual_preferences = ? WHERE id = ?'; // prepare the statement using positional params '?'
+            const   values = [ firstname, lastname, username, gender, email, birthdate, bio, sexual_preferences, id]; // values to be binded the first '?' will be replaced with the first element in the array and so on
             database.query(sql, values, (error, result) => {
                 if (error) reject(error);
                 resolve(true);
