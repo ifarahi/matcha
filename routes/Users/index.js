@@ -25,8 +25,9 @@ router.post('/reinitializePassword', validation.reinitializePassword, userContro
 router.post('/setting/changePassword', auth, validation.changePassword, userController.changePassword); // change user password after login
 
 router.post('/setting/changePersonalInformations', auth, validation.changePersonalInformations, userController.changePersonalInformations);
-
+router.get('/getPersonalInformation/:id', auth, userController.getPersonalInformation);
 //this route checks if the jwt is valid
 router.post('/authenticate', auth, userController.authenticate);
+router.get('/updateAuthToken', auth, userController.updateAuthToken);
 
 module.exports = router;

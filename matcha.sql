@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Oct 24, 2019 at 04:33 PM
+-- Generation Time: Nov 04, 2019 at 04:38 PM
 -- Server version: 5.7.28
 -- PHP Version: 7.2.22
 
@@ -34,13 +34,6 @@ CREATE TABLE `images` (
   `image` varchar(800) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data for table `images`
---
-
-INSERT INTO `images` (`id`, `user_id`, `image`) VALUES
-(5, 16, 'e0e96732-463d-40d6-965b-adacfcc5e194-1571918391593.jpeg');
-
 -- --------------------------------------------------------
 
 --
@@ -66,7 +59,7 @@ CREATE TABLE `users` (
   `gender` varchar(255) NOT NULL,
   `birthdate` varchar(255) DEFAULT NULL,
   `email` varchar(255) NOT NULL,
-  `profile_picture` varchar(800) DEFAULT NULL,
+  `profile_picture` varchar(800) DEFAULT 'defaultProfilePicture.png',
   `password` varchar(255) NOT NULL,
   `longitude` varchar(255) NOT NULL DEFAULT '0',
   `latitude` varchar(255) NOT NULL DEFAULT '0',
@@ -77,13 +70,6 @@ CREATE TABLE `users` (
   `bio` varchar(600) NOT NULL DEFAULT '0',
   `sexual_preferences` varchar(255) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`id`, `firstname`, `lastname`, `username`, `gender`, `birthdate`, `email`, `profile_picture`, `password`, `longitude`, `latitude`, `is_verified`, `is_first_visit`, `verify_email_token`, `forget_pass_token`, `bio`, `sexual_preferences`) VALUES
-(16, 'farahi', 'ismail', 'ifarahi', 'male', NULL, 'dr0farahi@gmail.com', '1f7a3734-3976-4e4e-971d-d387dd6db591-1571849690734.jpeg', '$2b$10$ElPd3ZkVnkcdfY0Bk1.UBui/8UD5w7osTncIFRuIotSi.adlIYdUi', '0', '0', 1, 1, '1Qf8Rk4p2miC3XfRkNYjEqDyJZeT0xCc', '0', '0', '0');
 
 -- --------------------------------------------------------
 
@@ -136,25 +122,25 @@ ALTER TABLE `user_tags`
 -- AUTO_INCREMENT for table `images`
 --
 ALTER TABLE `images`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 
 --
 -- AUTO_INCREMENT for table `tags`
 --
 ALTER TABLE `tags`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `user_tags`
 --
 ALTER TABLE `user_tags`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables

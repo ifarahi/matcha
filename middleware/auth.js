@@ -1,4 +1,5 @@
-const   jwt    = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
+const userModel = require('../models/Users');
 
 /*
 *** this middleware is responsable of verifying if the request has a valid authentication token
@@ -22,10 +23,16 @@ module.exports = (req, res, next) => { // take the request and check the header 
     }
 
     try { // Now verify the token if is valid its return the payload object if ! its throw an exception
-        jwt.verify(token, process.env.PRIVATE_KEY, (error, decoded) => {
+        jwt.verify(token, process.env.PRIVATE_KEY, async (error, decoded) => {
             if (!error) { // if there is no error its a valid token
                 req.decodedObject = decoded; // put the decoded object (Payload) in the request body
-                next(); // call to the next middleware
+                const userExist = await userModel.usernameExists(decoded.username);
+                if (userExist > 0)
+                    next(); // call to the next middleware
+                else {
+                    errorObject.message = 'Access denied. Token expired';
+                    res.json(errorObject);
+                }
             } else {
                 errorObject.message = 'Access denied. Invalid token provided';
                 res.json(errorObject);

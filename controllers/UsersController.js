@@ -144,7 +144,7 @@ module.exports = {
             }
         }
 
-        const User = _.pick(userRow, ['id', 'username', 'firstname', 'lastname', 'age', 'gender', 'bio', 'sexual_preferences', 'email', 'longitude', 'latitude', 'is_first_visit']); //usng lodash to pick only needed informations
+        const User = _.pick(userRow, ['id', 'username', 'firstname', 'lastname', 'age', 'gender', 'bio', 'profile_picture', 'birthdate', 'sexual_preferences', 'email', 'longitude', 'latitude', 'is_first_visit']); //usng lodash to pick only needed informations
         const token = await jwt.sign(User, process.env.PRIVATE_KEY); // sign the user token with the private key
         responseObject.status = true; // set the response status to true (user is currectly logged in)
         responseObject.user = User; // include the user data in the response object
@@ -266,7 +266,7 @@ module.exports = {
     },
 
     changePersonalInformations: async (req, res) => { // update a user personal information (only login users)
-        const   { username, firstname, lastname, email, gender, age, sexual_preferences, bio } = req.body; // extract the information sent in the request
+        const   { username, firstname, lastname, email, gender, birthdate, sexual_preferences, bio } = req.body; // extract the information sent in the request
         const   old = req.decodedObject; // the old information from the user row (added by the auth middleware)
         let     change = 0; // this change will be 1 if the user has changed at least one of their personal information
         const   responseObject = { // init the responseObject to be sent back
@@ -276,7 +276,7 @@ module.exports = {
 
         // if the user profile not completed cannot update this information the request should be end
         if (old.is_first_visit === 1) { // check if the user profile is not complete (old is the decodedObject added by the middleware containing the user information)
-            responseObject.message = "Your profile is not complete you cant update this information"
+            responseObject.message = "Your profile is not completed yet you cant update this information"
             res.json(responseObject);
             return;
         }
@@ -320,7 +320,7 @@ module.exports = {
         if (gender !== old.gender) { 
             change = 1;
         }
-        if (age !== old.age) { 
+        if (birthdate !== old.birthdate) { 
             change = 1;
         }
         if (sexual_preferences !== old.sexual_preferences) { 
@@ -329,10 +329,10 @@ module.exports = {
         if (bio !== old.bio) { 
             change = 1;
         }
-
+        
         if (change === 0) { // if change is still 0 thats mean nothing has been change end the request
             responseObject.status = true;
-            responseObject.message = "Nothing has been changed";
+            responseObject.message = "Your information is up to date";
             res.json(responseObject);
             return;
 
@@ -344,7 +344,7 @@ module.exports = {
                 lastname,
                 email,
                 gender,
-                age,
+                birthdate,
                 sexual_preferences,
                 bio
             }
@@ -363,6 +363,29 @@ module.exports = {
         }
     },
 
+    getPersonalInformation: async (req, res) => {
+        const {id} = req.params;
+        const responseObject = {
+            status: true
+        }
+
+        try {
+            const userRow = await userModel.fetchUserWithId(id);
+            if (userRow) {
+                responseObject.user = _.pick(userRow, ['username', 'firstname', 'lastname', 'age', 'gender', 'bio', 'sexual_preferences', 'birthdate', 'email', 'longitude', 'latitude']); //usng lodash to pick only needed informations
+                res.json(responseObject);
+            } else {
+                responseObject.status = false;
+                responseObject.message = 'User does not exist';
+                res.json(responseObject);
+            }
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = error;
+            res.json(responseObject);
+        }
+    },
+
     authenticate : async (req, res) => { // verify if the token is valid 
         res.json({
             status : true,
@@ -370,10 +393,25 @@ module.exports = {
         })
     },
 
-    testUser: async (req, res) => {
-        const {username} = req.body;
-        const userRow = 
-        res.send(userRow.email);
+    updateAuthToken: async (req, res) => {
+        const {username} = req.decodedObject;
+        const responseObject = {
+            status: true,
+            message: ''
+        }
+
+        try {
+            const userRow = await userModel.fetchUserWithUsername(username); //get the user email with the given username
+            const User = _.pick(userRow, ['id', 'username', 'firstname', 'lastname', 'age', 'gender', 'bio', 'profile_picture', 'sexual_preferences', 'email', 'longitude', 'latitude', 'is_first_visit']); //usng lodash to pick only needed informations
+            const token = await jwt.sign(User, process.env.PRIVATE_KEY); // sign the user token with the private key
+            responseObject.user = User; // include the user data in the response object
+            responseObject.token = token // set the user token on the header
+            res.json(responseObject); // send the user row in the body
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = error;
+            res.json(responseObject);
+        }
     }
 
 }

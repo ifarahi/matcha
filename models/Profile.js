@@ -25,7 +25,7 @@ module.exports = {
                 if (error)
                     reject(error);
                 else
-                    resolve(true);
+                    resolve(result);
             });
         });
     },
@@ -110,6 +110,20 @@ module.exports = {
                     reject(error);
                 else 
                     resolve(true);
+            });
+        });
+    },
+
+    isProfilePicture: (data) => {
+        const {user_id, image} = data;
+        return new Promise((resolve, reject) => {
+            const sql = 'SELECT count(*) as result FROM users WHERE id = ? AND profile_picture = ?';
+            const values = [user_id, image];
+            database.query(sql, values, (error, result) => {
+                if (error)
+                    reject(error);
+                else
+                    resolve(result[0]);
             });
         });
     }
