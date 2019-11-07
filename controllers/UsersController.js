@@ -363,6 +363,29 @@ module.exports = {
         }
     },
 
+    getPersonalInformation: async (req, res) => {
+        const {id} = req.params;
+        const responseObject = {
+            status: true
+        }
+
+        try {
+            const userRow = await userModel.fetchUserWithId(id);
+            if (userRow) {
+                responseObject.user = _.pick(userRow, ['username', 'firstname', 'lastname', 'age', 'gender', 'bio', 'sexual_preferences', 'email', 'longitude', 'latitude']); //usng lodash to pick only needed informations
+                res.json(responseObject);
+            } else {
+                responseObject.status = false;
+                responseObject.message = 'User does not exist';
+                res.json(responseObject);
+            }
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = error;
+            res.json(responseObject);
+        }
+    },
+
     authenticate : async (req, res) => { // verify if the token is valid 
         res.json({
             status : true,

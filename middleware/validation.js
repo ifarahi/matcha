@@ -101,11 +101,12 @@ module.exports = {
 
     changePassword: (req, res, next) => {
         const   errorObject = { // init the error object wich will be returned as a response in case of error
-            status: false
+            status: false,
+            message: 'Invalid information'
         }
         const schema = {
             newPassword: vivo.string().required().pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,36})/, 'your password should be at least one capital latter and one number and 8 characters length'),
-            confirmNewPassword: vivo.string().required().ref('password')
+            confirmNewPassword: vivo.string().required().ref('newPassword')
         }
 
         vivo.validate(schema, req.body)
@@ -133,7 +134,7 @@ module.exports = {
             gender: vivo.string().min(3).max(20).alpha().required(),
             birthdate: vivo.string().required().birthdate(),
             sexual_preferences: vivo.string().alpha().required().min(3).max(15),
-            bio: vivo.string().min(100).max(500)
+            bio: vivo.string().min(30).max(500)
         }
 
         vivo.validate(schema, req.body)
