@@ -49,14 +49,18 @@ module.exports = {
     },
 
     forgetPassword: (req, res, next) => {
+        console.log( req )
         const   errorObject = { // init the error object wich will be returned as a response in case of error
             status: false
         }
         const schema = {
             email: vivo.string().email().required()
         }
+        const data = {
+            email: req.params.email
+        }
 
-        vivo.validate(schema, req.body)
+        vivo.validate(schema, data)
         .then(body => next())
         .catch((error) => {
             errorObject.details = error.details;

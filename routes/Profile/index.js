@@ -25,6 +25,6 @@ router.get('/completeProfileTags/get', auth, ProfileController.completeProfile_t
 router.get('/completeProfileTags/get/all', auth, ProfileController.completeProfile_tags_getAll);
 router.get('/completeProfileTags/get/finish', auth, ProfileController.ompleteProfile_tags_validate);
 router.get('/completeprofile/progress', auth, ProfileController.fetchCompleteProfileProgress);
-router.get('/completeUserProfile', auth, ProfileController.completeUserProfile);
+router.get('/completeUserProfile/finish', auth, ProfileController.completeUserProfile);
 
 module.exports = router;
