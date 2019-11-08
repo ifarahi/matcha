@@ -14,6 +14,7 @@ app.use(router); // all requests will be hanlled by the router
 
 app.use((err, req, res, next) => {
     res.status(400).json({
+        status: false,
         message: err.message
     });
 });

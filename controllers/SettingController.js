@@ -1,4 +1,5 @@
 const   userModel = require('../models/Users');
+const   profileModel = require('../models/Profile');
 const   password_helper = require('../helpers/password_helper');
 const   random = require('../helpers/random_generator');
 const   mail   = require('../helpers/mail_sender');
@@ -6,6 +7,14 @@ const   _      = require('lodash');
 const   jwt    = require('jsonwebtoken');
 
 module.exports = {
+
+    changeLocation : async (req, res) => {
+        const {id} = req.decodedObject;
+        const {lat, lng} = req.body;
+
+
+    },
+
     changePassword: async (req, res) => { // change user password 
         const { oldPassword, newPassword } = req.body; // extract the data from the request body
         const { id } = req.decodedObject; // extract the user id from the decoded object added by the auth middleware
@@ -16,6 +25,22 @@ module.exports = {
         const responseObject = { // the response object to be sent back
             status: false,
             message: ""
+        }
+
+        // if the user profile not completed cannot update this information the request should be end
+        try {
+            const {is_first_visit} = await profileModel.fetchUserWithId(old.id);
+            if (is_first_visit !== 0){
+                responseObject.status = false;
+                responseObject.message = 'You need to complete your profile';
+                res.json(responseObject);
+                return;
+            }
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = 'error';
+            res.json(responseObject);
+            return ;
         }
 
         const user = await userModel.fetchUserWithId(id); // fetch the user row
@@ -46,10 +71,19 @@ module.exports = {
         }
 
         // if the user profile not completed cannot update this information the request should be end
-        if (old.is_first_visit === 1) { // check if the user profile is not complete (old is the decodedObject added by the middleware containing the user information)
-            responseObject.message = "Your profile is not completed yet you cant update this information"
+        try {
+            const {is_first_visit} = await profileModel.fetchUserWithId(old.id);
+            if (is_first_visit !== 0){
+                responseObject.status = false;
+                responseObject.message = 'You need to complete your profile';
+                res.json(responseObject);
+                return;
+            }
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = 'error';
             res.json(responseObject);
-            return;
+            return ;
         }
 
         if (username !== old.username) { // if the user set a new username check if that username is not already exists
