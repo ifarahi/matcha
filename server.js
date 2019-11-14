@@ -13,6 +13,7 @@ app.use(router); // all requests will be hanlled by the router
 // what is this and also should we just remove serve static assets?
 app.use((err, req, res, next) => {
     res.status(400).json({
+        status: false,
         message: err.message
     });
 });

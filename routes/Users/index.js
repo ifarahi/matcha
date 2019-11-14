@@ -22,9 +22,6 @@ router.get('/forgetPassword/:email', validation.forgetPassword, userController.f
 router.get('/isValidToken/:token', userController.isValidToken); // verify if the given token is valid (belong to a user)
 router.post('/reinitializePassword', validation.reinitializePassword, userController.reinitializePassword); // set new password to the user with the give token
 
-router.post('/setting/changePassword', auth, validation.changePassword, userController.changePassword); // change user password after login
-
-router.post('/setting/changePersonalInformations', auth, validation.changePersonalInformations, userController.changePersonalInformations);
 router.get('/getPersonalInformation/:id', auth, userController.getPersonalInformation);
 //this route checks if the jwt is valid
 router.post('/authenticate', auth, userController.authenticate);

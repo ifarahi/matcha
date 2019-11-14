@@ -2,6 +2,7 @@ const   express = require('express');
 const   router = express.Router();
 const   Users = require('./Users');
 const   Profile = require('./Profile');
+const   Setting = require('./Setting');
 
 /*
 **** This is the router module wich is responsable to pass controll to the right router 
@@ -10,5 +11,6 @@ const   Profile = require('./Profile');
 
 router.use('/users', Users); // any reqeust contains '/users' will be handled by the user router 
 router.use('/profile', Profile);
+router.use('/setting', Setting);
 
 module.exports = router;

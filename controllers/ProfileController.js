@@ -160,6 +160,21 @@ module.exports = {
             status: true,
             message: ''
         }
+
+        try {
+            const {is_first_visit} = await profileModel.fetchUserWithId(data.user_id);
+            if (is_first_visit !== 0 && is_first_visit !== 3){
+                responseObject.status = false;
+                responseObject.message = 'You need to insert your personal information and tags before you can upload your pictures';
+                res.json(responseObject);
+                return;
+            }
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = error;
+            res.json(error);
+            return ;
+        }
         if (data.image !== undefined) {
             try {
                 await profileModel.saveUserImage(data);
