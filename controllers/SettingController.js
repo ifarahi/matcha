@@ -8,11 +8,33 @@ const   jwt    = require('jsonwebtoken');
 
 module.exports = {
 
-    changeLocation : async (req, res) => {
-        const {id} = req.decodedObject;
-        const {lat, lng} = req.body;
+    updateUserLocation : async (req, res) => {
+        const data = {
+            user_id: req.decodedObject.id,
+            lat: req.body.lat,
+            lng: req.body.lng
+        }
+        const responseObject = {
+            status: true,
+            message: '',
+        }
 
-
+        try {
+            const result = await profileModel.updateUserLocation(data);
+            if (result === true) {
+                responseObject.message = 'Your current location has been updated';
+                res.json(responseObject);
+            } else {
+                responseObject.status = false;
+                responseObject.message = 'somthing went wrong';
+                res.json(responseObject);
+            }
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = `somthine went wrong ERROR: ${error}`;
+            res.json(responseObject)
+        }
+        
     },
 
     changePassword: async (req, res) => { // change user password 

@@ -6,5 +6,6 @@ const   auth = require('../../middleware/auth');
 
 router.post('/changePassword', auth, validation.changePassword, settingController.changePassword); // change user password after login
 router.post('/changePersonalInformations', auth, validation.changePersonalInformations, settingController.changePersonalInformations);
+router.post('/updateUserLocation', auth, settingController.updateUserLocation);
 
 module.exports = router;
