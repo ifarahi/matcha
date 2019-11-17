@@ -51,7 +51,7 @@ module.exports = {
 
         // if the user profile not completed cannot update this information the request should be end
         try {
-            const {is_first_visit} = await profileModel.fetchUserWithId(old.id);
+            const {is_first_visit} = await profileModel.fetchUserWithId(id);
             if (is_first_visit !== 0){
                 responseObject.status = false;
                 responseObject.message = 'You need to complete your profile';
