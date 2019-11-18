@@ -126,5 +126,19 @@ module.exports = {
                     resolve(result[0]);
             });
         });
+    },
+
+    updateUserLocation: (data) => {
+        return new Promise((resolve, reject) => {
+            const {user_id, lng, lat} = data;
+            const sql = 'UPDATE users SET longitude = ?, latitude = ? WHERE id = ?';
+            const values = [lng, lat, user_id];
+            database.query(sql, values, (error, result) => {
+                if (error)
+                    reject(error);
+                else
+                    resolve(true);
+            });
+        });
     }
 }
