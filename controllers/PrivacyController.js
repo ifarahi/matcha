@@ -31,9 +31,22 @@ module.exports = {
         }
 
         try {
-            const result = await privacyModel.blockUser(data);
-            if (result === true) {
-                responseObject.message = 'User has been successfuly blocked';
+            const result = await profileModel.fetchUserWithId(blocked_id);
+            if (result !== undefined) {
+                if (blocked_id === id){
+                    responseObject.status = false;
+                    responseObject.message = 'Unvalid operation';
+                    res.json(responseObject);
+                } else {
+                    const response = await privacyModel.blockUser(data);
+                    if (response === true) {
+                        responseObject.message = 'User has been successfuly blocked';
+                        res.json(responseObject);
+                    }
+                }
+            } else {
+                responseObject.status = false;
+                responseObject.message = 'User does not exist';
                 res.json(responseObject);
             }
         } catch (error) {
@@ -72,9 +85,29 @@ module.exports = {
         }
 
         try {
-            const result = await privacyModel.unblockUser(data);
-            if (result === true) {
-                responseObject.message = 'User has been successfuly unblocked';
+            const result = await profileModel.fetchUserWithId(blocked_id);
+            if (result !== undefined) {
+                if (blocked_id === id){
+                    responseObject.status = false;
+                    responseObject.message = 'Unvalid operation';
+                    res.json(responseObject);
+                } else {
+                    const isBlocked = await privacyModel.isUserBlocker(data);
+                    if (isBlocked !== undefined) {
+                        const response = await privacyModel.unblockUser(data);
+                        if (response === true) {
+                            responseObject.message = 'User has been successfuly unblocked';
+                            res.json(responseObject);
+                        }
+                    } else {
+                        responseObject.status = false;
+                        responseObject.message = 'User is not on your blocked list';
+                        res.json(responseObject);
+                    }
+                }
+            } else {
+                responseObject.status = false;
+                responseObject.message = 'User does not exist';
                 res.json(responseObject);
             }
         } catch (error) {

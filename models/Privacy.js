@@ -27,5 +27,19 @@ module.exports = {
                     resolve(true);
             });
         });
+    },
+
+    isUserBlocker: (data) => {
+        return new Promise((resolve, reject) => {
+            const {user_id, blocked_id} = data;
+            const sql = 'SELECT * FROM blocks WHERE user_id = ? AND blocked_id = ?';
+            const values = [user_id,blocked_id];
+            databse.query(sql, values, (error, result) => {
+                if (error)
+                    reject(error);
+                else
+                    resolve(result[0]);
+            });
+        });
     }
 }
