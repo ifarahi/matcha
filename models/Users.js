@@ -78,7 +78,7 @@ module.exports = {
 
     fetchUserWithUsername: (username) => { // return a promise contain the user row
         return new Promise((resolve, reject) => {
-            database.query('SELECT * FROM users WHERE username = ?', username, (error, result) => {
+            database.query('SELECT TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) AS age, id, is_verified, verify_email_token, forget_pass_token, password, firstname, lastname, username, email, gender, birthdate, profile_picture, longitude, latitude, is_first_visit, sexual_preferences, bio FROM users WHERE username = ?', username, (error, result) => {
                 if (error) reject(error);
                 resolve(result[0]);
             });

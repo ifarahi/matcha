@@ -29,7 +29,7 @@ module.exports = {
         });
     },
 
-    isUserBlocker: (data) => {
+    isUserBlocked: (data) => {
         return new Promise((resolve, reject) => {
             const {user_id, blocked_id} = data;
             const sql = 'SELECT * FROM blocks WHERE user_id = ? AND blocked_id = ?';
@@ -39,6 +39,30 @@ module.exports = {
                     reject(error);
                 else
                     resolve(result[0]);
+            });
+        });
+    },
+
+    getBlockedList: (id) => {
+        return new Promise((resolve, reject) => {
+            const sql = 'SELECT * FROM blocks WHERE user_id = ?';
+            databse.query(sql, id, (error, result) => {
+                if (error)
+                    reject(error);
+                else
+                    resolve(result);
+            });
+        });
+    },
+
+    getBlockersList: (id) => {
+        return new Promise((resolve, reject) => {
+            const sql = 'SELECT * FROM blocks WHERE blocked_id = ?';
+            databse.query(sql, id, (error, result) => {
+                if (error)
+                    reject(error);
+                else
+                    resolve(result);
             });
         });
     }

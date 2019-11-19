@@ -38,10 +38,17 @@ module.exports = {
                     responseObject.message = 'Unvalid operation';
                     res.json(responseObject);
                 } else {
-                    const response = await privacyModel.blockUser(data);
-                    if (response === true) {
-                        responseObject.message = 'User has been successfuly blocked';
+                    const isBlocked = await privacyModel.isUserBlocked(data);
+                    if (isBlocked !== undefined) {
+                        responseObject.status = false;
+                        responseObject.message = 'User is already blocked';
                         res.json(responseObject);
+                    } else {
+                        const response = await privacyModel.blockUser(data);
+                        if (response === true) {
+                            responseObject.message = 'User has been successfuly blocked';
+                            res.json(responseObject);
+                        }
                     }
                 }
             } else {
@@ -67,7 +74,7 @@ module.exports = {
             status: true,
             message: ''
         }
-
+        
         // if the user profile not completed cannot update this information the request should be end
         try {
             const {is_first_visit} = await profileModel.fetchUserWithId(id);
@@ -92,7 +99,7 @@ module.exports = {
                     responseObject.message = 'Unvalid operation';
                     res.json(responseObject);
                 } else {
-                    const isBlocked = await privacyModel.isUserBlocker(data);
+                    const isBlocked = await privacyModel.isUserBlocked(data);
                     if (isBlocked !== undefined) {
                         const response = await privacyModel.unblockUser(data);
                         if (response === true) {
