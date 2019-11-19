@@ -14,7 +14,7 @@ const validate = function (input) {
             return (null)
     }
     if (this.isBirthdate === true) {
-        const [month = null, day = null, year = null] = input.split('-');
+        const [year = null, month = null, day = null] = input.split('-');
         const nowDate = new Date();
     
         if (day === null || month === null || year === null)
