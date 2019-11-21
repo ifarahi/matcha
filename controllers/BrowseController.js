@@ -1,5 +1,6 @@
 const browseModel = require('../models/Browse');
 const privacyModel = require('../models/Privacy');
+const tagsModel = require('../models/Tags');
 const browseHelper = require('../helpers/browseHelper');
 
 module.exports = {
@@ -31,6 +32,10 @@ module.exports = {
             const blocked = await privacyModel.getBlockedList(id);
             const blockers = await privacyModel.getBlockersList(id);
             const latestUserProfile = await browseModel.fetchUserProfile(id);
+
+            // get connected user tags
+            latestUserProfile.tags = await tagsModel.userGetTags(id);
+            latestUserProfile.tags = latestUserProfile.tags.map(elm => elm.name);
 
             // filter profiles list from blocked profiles
             profiles = await browseHelper.filterBlocked({profiles, blocked});

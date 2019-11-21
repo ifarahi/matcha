@@ -2,7 +2,8 @@ module.exports = (req, res, next) => {
     const filter = req.body.filter;
     const defaultFilter = {
         age: [18,27],
-        tags: 1,
+        commonTags: 0,
+        tags: [],
         distance: 10,
         rating: [0, 1]
     }
@@ -18,6 +19,9 @@ module.exports = (req, res, next) => {
         }
         if (filter.rating === undefined) {
             filter.rating = defaultFilter.rating;
+        }
+        if (filter.commonTags === undefined) {
+            filter.commonTags = defaultFilter.commonTags;
         }
     } else {
         req.filter = defaultFilter;

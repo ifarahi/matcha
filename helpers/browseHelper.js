@@ -1,4 +1,6 @@
 const geolib = require('geolib');
+const tagModel = require('../models/Tags');
+const _ = require('lodash');
 
 module.exports = {
     filterBlocked: (data) => {
@@ -62,8 +64,8 @@ module.exports = {
     applyFilter: (data) => {
         return new Promise( async (resolve, reject) => {
             const {profiles, filter, latestUserProfile} = data;
-            const {age, tags, distance, rating} = filter;
-            const {latitude, longitude} = latestUserProfile;
+            const {age, commonTags, tags, distance, rating} = filter;
+            const {latitude, longitude, tags:userTags } = latestUserProfile;
 
             // filter with age
             let filtredList = profiles.filter((profile) => {
@@ -74,14 +76,37 @@ module.exports = {
             });
 
             // filter with distance 
-            filtredList = profiles.filter((profile) => {
+            filtredList = filtredList.filter((profile) => {
+                profile.tags = []; // Assign empty tags array to be used on tags filtring
                 const dist = Math.trunc(geolib.convertDistance(geolib.getDistance({latitude,longitude}, {latitude: profile.latitude, longitude: profile.longitude}), "km"));
-                console.log(dist);
+                profile.distance = dist;
                 if (dist <= distance)
                     return true;
                 else
                     return false;
             });
+
+            try {
+                // fetch all tags
+                const usersTags = await tagModel.usersGetTags();
+                usersTags.forEach(tag => {
+                    let profile = filtredList.find((profile) => profile.id === tag.user_id);
+
+                    if (profile !== undefined){
+                        profile.tags.push(tag.name);
+                    }
+                });
+
+                // filter with common tags number && filter with giving tags
+                filtredList = filtredList.filter((profile) => {
+                    if (tags.length > 0)
+                        return _.intersection(tags, profile.tags).length == tags.length;
+                    return _.intersection(userTags, profile.tags).length >= commonTags;
+                });
+
+            } catch (error) {
+                return reject(error);
+            }
 
             resolve(filtredList);
         });

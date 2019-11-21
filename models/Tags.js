@@ -84,6 +84,15 @@ module.exports = {
         });
     },
 
+    usersGetTags : () => { // Gets the list of all users tags
+        return new Promise( ( resolve, reject ) => {
+            database.query('Select tags.name, user_tags.user_id from tags join user_tags on tags.id = user_tags.tag_id', (error, result) => {
+                if (error) reject(error);
+                else resolve(result);
+            });
+        });
+    },
+
     userGetAllTags : () => { //  Gets the list of all the tags that exists in the database
         return new Promise( ( resolve, reject ) => {
             database.query('Select name from tags ', (error, result) => {
