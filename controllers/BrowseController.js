@@ -49,6 +49,9 @@ module.exports = {
             // filter based on sexual preferences
             profiles = await browseHelper.filterSexualPreferences({sexualPreference: latestUserProfile.sexual_preferences, profiles})
 
+            // filter already matched profiles
+            profiles = await browseHelper.filterMatchedProfiles({profiles, id});
+
             // apply given or default filter preferences
             profiles = await browseHelper.applyFilter({profiles, filter, latestUserProfile});
 

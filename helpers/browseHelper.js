@@ -1,5 +1,6 @@
 const geolib = require('geolib');
 const tagModel = require('../models/Tags');
+const browseModel = require('../models/Browse');
 const _ = require('lodash');
 
 module.exports = {
@@ -41,6 +42,20 @@ module.exports = {
         });
     },
 
+    filterMatchedProfiles: (data) => {
+        return new Promise( async (resolve, reject) => {
+            const {profiles, id} = data;
+            const matches = await browseModel.fetchMatchedProfiles(id);
+            const filtredList = profiles.filter((profile) => {
+                if ((profile.id !== matches.user_one) && (profile.id !== matches.user_two))
+                    return true;
+                else
+                    return false;
+            });
+            resolve(filtredList);
+        })
+    }, 
+
     filterSexualPreferences: (data) => {
         return new Promise((resolve, reject) => {
             const {profiles, sexualPreference} = data;
@@ -67,26 +82,27 @@ module.exports = {
             const {age, commonTags, tags, distance, rating} = filter;
             const {latitude, longitude, tags:userTags } = latestUserProfile;
 
-            // filter with age
-            let filtredList = profiles.filter((profile) => {
-                if (profile.age >= age[0] && profile.age <= age[1])
-                    return true;
-                else
-                    return false;
-            });
-
-            // filter with distance 
-            filtredList = filtredList.filter((profile) => {
-                profile.tags = []; // Assign empty tags array to be used on tags filtring
-                const dist = Math.trunc(geolib.convertDistance(geolib.getDistance({latitude,longitude}, {latitude: profile.latitude, longitude: profile.longitude}), "km"));
-                profile.distance = dist;
-                if (dist <= distance)
-                    return true;
-                else
-                    return false;
-            });
-
             try {
+
+                // filter with age
+                let filtredList = profiles.filter((profile) => {
+                    if (profile.age >= age[0] && profile.age <= age[1])
+                        return true;
+                    else
+                        return false;
+                });
+
+                // filter with distance 
+                filtredList = filtredList.filter((profile) => {
+                    profile.tags = []; // Assign empty tags array to be used on tags filtring
+                    const dist = Math.trunc(geolib.convertDistance(geolib.getDistance({latitude,longitude}, {latitude: profile.latitude, longitude: profile.longitude}), "km"));
+                    profile.distance = dist;
+                    if (dist <= distance)
+                        return true;
+                    else
+                        return false;
+                });
+
                 // fetch all tags
                 const usersTags = await tagModel.usersGetTags();
                 usersTags.forEach(tag => {
@@ -104,11 +120,12 @@ module.exports = {
                     return _.intersection(userTags, profile.tags).length >= commonTags;
                 });
 
+                filtredList = filtredList.filter((profile) => profile.rating >= rating[0] && profile.rating <= rating[1]);
+                resolve(filtredList);
             } catch (error) {
                 return reject(error);
             }
 
-            resolve(filtredList);
         });
     }
 }
