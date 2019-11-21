@@ -1,10 +1,10 @@
 module.exports = (req, res, next) => {
     const filter = req.body.filter;
     const defaultFilter = {
-        age: 3,
+        age: [18,27],
         tags: 1,
         distance: 10,
-        rating: 0
+        rating: [0, 1]
     }
     if (filter !== undefined) {
         if (filter.age === undefined){
