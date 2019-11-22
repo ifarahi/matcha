@@ -149,6 +149,72 @@ module.exports = {
         })
     },
 
+    fetchProfiles: (req, res, next) => {
+        const filter = req.body.filter;
+        errorObject = {
+            status: false
+        }
+
+        if (filter !== undefined) {
+            if (filter.age !== undefined){
+                if (Array.isArray(filter.age)) {
+                    if (!Number.isInteger(filter.age[0]) || !Number.isInteger(filter.age[1])) {
+                        errorObject.message = 'Unvalid age filter values must be a valid numbers';
+                        res.json(errorObject);
+                        return;
+                    }
+                } else {
+                    errorObject.message = 'Unvalid age filter value';
+                    res.json(errorObject);
+                    return;
+                }
+            }
+            if (filter.commonTags !== undefined) {
+                if (!Number.isInteger(filter.commonTags)) {
+                    errorObject.message = 'Unvalid common tags filter values must be a valid numbers';
+                    res.json(errorObject);
+                    return;
+                }
+            }
+            if (filter.tags !== undefined) {
+                if (Array.isArray(filter.tags)) {
+                    filter.tags.forEach((Element) => {
+                        if (!/^[a-z0-9]{2,10}$/.test(Element)) {
+                            errorObject.message = 'Unvalid tag filter';
+                            res.json(errorObject);
+                            return;
+                        }
+                    });
+                } else {
+                    errorObject.message = 'Unvalid tags filter value';
+                    res.json(errorObject);
+                    return;
+                }
+            }
+            if (filter.distance !== undefined) {
+                if (!Number.isInteger(filter.distance)) {
+                    errorObject.message = 'Unvalid distance filter values must be a valid numbers';
+                    res.json(errorObject);
+                    return;
+                }
+            }
+            if (filter.rating !== undefined){
+                if (Array.isArray(filter.rating)) {
+                    if (!Number.isInteger(filter.rating[0]) || !Number.isInteger(filter.rating[0])) {
+                        errorObject.message = 'Unvalid rating filter values must be a valid numbers';
+                        res.json(errorObject);
+                        return;
+                    }
+                } else {
+                    errorObject.message = 'Unvalid age filter value';
+                    res.json(errorObject);
+                    return;
+                }
+            }
+        }
+        next();
+    },
+
     tags: async (req, res, next) => {
         //Tags object needed for vivo validate
         const tags = {
