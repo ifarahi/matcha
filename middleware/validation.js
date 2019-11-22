@@ -215,6 +215,23 @@ module.exports = {
         next();
     },
 
+    fetchUserProfile: (req, res, next) => {
+        const username = req.body.username;
+        errorObject = {
+            status: false
+        }
+        const schema = {
+            username: vivo.string().alpha().required().min(5).max(20)
+        }
+
+        vivo.validate(schema, {username})
+        .then(body => next())
+        .catch((error) => {
+            errorObject.details = error.details;
+            res.json(errorObject);
+        })
+    },
+
     tags: async (req, res, next) => {
         //Tags object needed for vivo validate
         const tags = {

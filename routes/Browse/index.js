@@ -6,6 +6,6 @@ const browseFilter = require('../../middleware/browseFilter');
 const browseController = require('../../controllers/BrowseController');
 
 router.post('/fetchProfiles', auth, validation.fetchProfiles, browseFilter, browseController.fetchProfiles);
-router.post('/fetchUserProfile', auth, browseController.fetchUserProfile);
+router.post('/fetchUserProfile', auth, validation.fetchUserProfile, browseController.fetchUserProfile);
 
 module.exports = router;
