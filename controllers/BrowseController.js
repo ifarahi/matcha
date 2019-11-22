@@ -1,7 +1,10 @@
 const browseModel = require('../models/Browse');
 const privacyModel = require('../models/Privacy');
+const profileModel = require('../models/Profile');
+const userModel = require('../models/Users');
 const tagsModel = require('../models/Tags');
 const browseHelper = require('../helpers/browseHelper');
+const fetch = require('node-fetch');
 
 module.exports = {
     fetchProfiles: async (req, res) => {
@@ -67,6 +70,49 @@ module.exports = {
 
     fetchUserProfile: async (req, res) => {
         const { username } = req.body;
+        const responseObject = {
+            status: true
+        }
+
+        try {
+
+            // check if the user is exists
+            const userExists = await userModel.usernameExists(username);
+            if (userExists < 1) {
+                responseObject.status = false;
+                responseObject.message = 'Bad request';
+                res.json(responseObject);
+
+            } else {
+
+                // fetch the user profile
+                const userProfile = await browseModel.fetchProfileWithUsername(username);
+                const {longitude, latitude, id} = userProfile;
+    
+                // fetch user tags
+                userProfile.tags = await tagsModel.userGetTags(userProfile.id);
+                // set user tags on array instad of array object
+                userProfile.tags = userProfile.tags.map(elm => elm.name);
+    
+    
+                // fetch user location with the given geoLocation
+                const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.GOOGLE_API_KEY}`);
+                const data = await response.json();
+                userProfile.location = data.results[0].formatted_address;
+    
+                // fetch user images 
+                const userImages = await profileModel.getUserImages(id);
+                userProfile.images = userImages.map(elm => elm.image);
+    
+                responseObject.userProfile = userProfile;
+                res.json(responseObject);
+            }
+
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = error.message;
+            res.json(responseObject);
+        }
 
     }
 }
