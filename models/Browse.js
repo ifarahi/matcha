@@ -52,4 +52,16 @@ module.exports = {
         });
     },
 
+    fetchProfileLikes: (id) => {
+        return new Promise((resolve, reject) => {
+            const sql = 'SELECT * FROM likes WHERE user_likes = ?';
+            database.query(sql, id, (error, result) => {
+                if (error)
+                    reject(error);
+                else
+                    resolve(result);
+            });
+        });
+    }
+
 }

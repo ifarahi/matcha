@@ -46,6 +46,8 @@ module.exports = {
         return new Promise( async (resolve, reject) => {
             const {profiles, id} = data;
             const matches = await browseModel.fetchMatchedProfiles(id);
+            if (matches === undefined) 
+                return resolve(profiles);
             const filtredList = profiles.filter((profile) => {
                 if ((profile.id !== matches.user_one) && (profile.id !== matches.user_two))
                     return true;
@@ -54,6 +56,22 @@ module.exports = {
             });
             resolve(filtredList);
         })
+    },
+
+    filterProfileLikes: (data) => {
+        return new Promise(async (resolve, reject) => {
+            const {profiles, userLikes} = data;
+            const filtredList = profiles.filter((profile) => {
+                let exists = true;
+
+                userLikes.forEach((elm) => {
+                    if (elm.user_liked == profile.id)
+                        exists = false;
+                });
+                return exists;
+            });
+            resolve(filtredList);
+        });
     },
 
     filterSexualPreferences: (data) => {

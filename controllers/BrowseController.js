@@ -36,6 +36,9 @@ module.exports = {
             const blockers = await privacyModel.getBlockersList(id);
             const latestUserProfile = await browseModel.fetchUserProfile(id);
 
+            // get user likes list
+            const userLikes = await browseModel.fetchProfileLikes(id);
+
             // get connected user tags
             latestUserProfile.tags = await tagsModel.userGetTags(id);
             latestUserProfile.tags = latestUserProfile.tags.map(elm => elm.name);
@@ -54,6 +57,8 @@ module.exports = {
 
             // filter already matched profiles
             profiles = await browseHelper.filterMatchedProfiles({profiles, id});
+
+            profiles = await browseHelper.filterProfileLikes({profiles, id, userLikes});
 
             // apply given or default filter preferences
             profiles = await browseHelper.applyFilter({profiles, filter, latestUserProfile});
