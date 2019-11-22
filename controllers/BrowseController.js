@@ -70,10 +70,11 @@ module.exports = {
 
     fetchUserProfile: async (req, res) => {
         const { username } = req.body;
+        const {id:connected} = req.decodedObject;
         const responseObject = {
             status: true
         }
-
+        // console.log(id)
         try {
 
             // check if the user is exists
@@ -87,8 +88,22 @@ module.exports = {
 
                 // fetch the user profile
                 const userProfile = await browseModel.fetchProfileWithUsername(username);
-                const {longitude, latitude, id} = userProfile;
+                const {longitude, latitude, id:requested} = userProfile;
     
+                // check if the connected user is already blocked the given user
+                const isUserBlocker = await privacyModel.isUserBlocker({user_id: connected, blocked_id: requested});
+
+                // check if the requested user is already blocked the connected user
+                const isUserBlocked = await privacyModel.isUserBlocker({user_id: requested, blocked_id: connected});
+
+                // if the user is blocked or blocker end the request with a false status
+                if (isUserBlocked !== undefined || isUserBlocker !== undefined){
+                    responseObject.status = false;
+                    responseObject.message = 'Unauthorized page';
+                    res.json(responseObject);
+                    return;
+                }
+
                 // fetch user tags
                 userProfile.tags = await tagsModel.userGetTags(userProfile.id);
                 // set user tags on array instad of array object
@@ -101,7 +116,7 @@ module.exports = {
                 userProfile.location = data.results[0].formatted_address;
     
                 // fetch user images 
-                const userImages = await profileModel.getUserImages(id);
+                const userImages = await profileModel.getUserImages(requested);
                 userProfile.images = userImages.map(elm => elm.image);
     
                 responseObject.userProfile = userProfile;
