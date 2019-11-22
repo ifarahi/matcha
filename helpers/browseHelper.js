@@ -54,7 +54,7 @@ module.exports = {
             });
             resolve(filtredList);
         })
-    }, 
+    },
 
     filterSexualPreferences: (data) => {
         return new Promise((resolve, reject) => {

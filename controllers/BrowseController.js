@@ -55,12 +55,18 @@ module.exports = {
             // apply given or default filter preferences
             profiles = await browseHelper.applyFilter({profiles, filter, latestUserProfile});
 
-            res.json(profiles);
+            responseObject.profiles = profiles;
+            res.json(responseObject);
 
         } catch (error) {
             responseObject.status = false;
             responseObject.message = `something went wrong Error: ${error}`;
             res.json(responseObject);
         }
+    },
+
+    fetchUserProfile: async (req, res) => {
+        const { username } = req.body;
+
     }
 }

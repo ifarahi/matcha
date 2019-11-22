@@ -24,7 +24,7 @@ module.exports = (req, res, next) => {
             filter.commonTags = defaultFilter.commonTags;
         }
     } else {
-        req.filter = defaultFilter;
+        req.body.filter = defaultFilter;
     }
     next();
 }
