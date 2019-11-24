@@ -9,7 +9,7 @@ module.exports = {
             const   values = [ birthdate, bio, sexual_preferences, id]; // values to be binded the first '?' will be replaced with the first element in the array and so on
             database.query(sql, values, (error, result) => {
                 if (error)
-                    reject(error);
+                    return reject(error);
                 else
                     resolve(true);
             });
@@ -23,7 +23,7 @@ module.exports = {
             const   values = [ image, user_id]; 
             database.query(sql, values, (error, result) => {
                 if (error)
-                    reject(error);
+                    return reject(error);
                 else
                     resolve(result);
             });
@@ -37,7 +37,7 @@ module.exports = {
             const values = [user_id, image];
             database.query(sql, values, (error, result) => {
                 if (error)
-                    reject(error);
+                    return reject(error);
                 else
                     resolve(true);
             });
@@ -49,7 +49,7 @@ module.exports = {
             const sql = 'SELECT * FROM images WHERE user_id = ?';
             database.query(sql, id, (error, result) => {
                 if (error)
-                    reject(error);
+                    return reject(error);
                 else
                     resolve(result);
             });
@@ -61,7 +61,7 @@ module.exports = {
             const sql = 'DELETE FROM images WHERE user_id = ? AND image = ?';
             database.query(sql, [data.user_id, data.image], (error, result) => {
                 if (error)
-                    reject(error);
+                    return reject(error);
                 else
                     resolve(true);
             });
@@ -73,7 +73,7 @@ module.exports = {
             const sql = 'SELECT count(*) as images FROM images WHERE user_id = ?';
             database.query(sql, [id], (error, result) => {
                 if (error)
-                    reject(error);
+                    return reject(error);
                 else
                     resolve(result[0]);
             });
@@ -86,7 +86,7 @@ module.exports = {
             const values = [data.user_id, data.image];
             database.query(sql, values, (error, result) => {
                 if (error)
-                    reject(error);
+                    return reject(error);
                 else
                     resolve(result[0]);
             });
@@ -96,7 +96,8 @@ module.exports = {
     fetchUserWithId: (id) => {
         return new Promise((resolve, reject) => {
             database.query('SELECT * FROM users WHERE id = ?', id, (error, result) => {
-                if (error) reject(error);
+                if (error) 
+                    return reject(error);
                 resolve(result[0]);
             });
         });
@@ -107,7 +108,7 @@ module.exports = {
             const sql = 'UPDATE users SET is_first_visit = 0 WHERE id = ?';
             database.query(sql, id, (error, result) => {
                 if (error)
-                    reject(error);
+                    return reject(error);
                 else 
                     resolve(true);
             });
@@ -121,7 +122,7 @@ module.exports = {
             const values = [user_id, image];
             database.query(sql, values, (error, result) => {
                 if (error)
-                    reject(error);
+                    return reject(error);
                 else
                     resolve(result[0]);
             });
@@ -135,7 +136,7 @@ module.exports = {
             const values = [lng, lat, user_id];
             database.query(sql, values, (error, result) => {
                 if (error)
-                    reject(error);
+                    return reject(error);
                 else
                     resolve(true);
             });

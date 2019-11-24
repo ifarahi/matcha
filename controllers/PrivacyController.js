@@ -1,5 +1,6 @@
 const privacyModel = require('../models/Privacy');
 const profileModel = require('../models/Profile');
+const actionsModel = require('../models/Actions');
 
 module.exports = {
     blockUser: async (req, res) => {
@@ -44,6 +45,9 @@ module.exports = {
                         responseObject.message = 'User is already blocked';
                         res.json(responseObject);
                     } else {
+                        const {isMatch} = await actionsModel.isMatch({ConnectedUser: id, RequestedUser: blocked_id});
+                        if (isMatch > 0)
+                            await actionsModel.unMatchUsers({ConnectedUser: id, RequestedUser: blocked_id});
                         const response = await privacyModel.blockUser(data);
                         if (response === true) {
                             responseObject.message = 'User has been successfuly blocked';
