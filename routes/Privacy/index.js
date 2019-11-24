@@ -8,5 +8,6 @@ const {isProfileCompleted} = require('../../middleware/authorization');
 router.post('/blockUser', auth, isProfileCompleted, validation.privacy, privacyController.blockUser);
 router.post('/unblockUser', auth, isProfileCompleted, validation.privacy, privacyController.unblockUser);
 router.post('/report', auth, isProfileCompleted, validation.privacy, privacyController.report);
+router.get('/getBlockedList', auth, isProfileCompleted, privacyController.getBlockedList);
 
 module.exports = router;

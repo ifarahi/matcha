@@ -185,5 +185,5 @@ module.exports = {
             responseObject.message = error.message;
             res.json(responseObject);
         }
-    }
+    },
 }

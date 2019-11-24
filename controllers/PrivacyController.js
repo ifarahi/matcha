@@ -150,5 +150,24 @@ module.exports = {
             responseObject.message = `something went wrong Error: ${error}`;
             res.json(responseObject);
         }
+    },
+
+    getBlockedList: async (req, res) => {
+        const {id} = req.decodedObject;
+        responseObject = {
+            status: true,
+            blockedList: []
+        }
+
+        try {
+            const blockedList = await privacyModel.getBlockedList(id);
+            responseObject.blockedList = blockedList;
+            res.json(responseObject);
+            
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = `something went wrong Error: ${error}`;
+            res.json(responseObject);
+        }
     }
 }
