@@ -249,10 +249,11 @@ module.exports = {
                 return;
             }
         }
+        next();
     },
 
     privacy: (req, res, next) => {
-        const {user_id} = req.body;
+        const {blocked_id} = req.body;
         const errorObject = {
             status: false
         }
@@ -268,6 +269,7 @@ module.exports = {
                 return;
             }
         }
+        next();
     },
 
     tags: async (req, res, next) => {

@@ -20,7 +20,7 @@ module.exports = {
             if (result !== undefined) {
                 if (blocked_id === id){
                     responseObject.status = false;
-                    responseObject.message = 'Unvalid operation';
+                    responseObject.message = 'Invalid operation';
                     res.json(responseObject);
                 } else {
                     const isBlocked = await privacyModel.isUserBlocked(data);
@@ -71,7 +71,7 @@ module.exports = {
             if (result !== undefined) {
                 if (blocked_id === id){
                     responseObject.status = false;
-                    responseObject.message = 'Unvalid operation';
+                    responseObject.message = 'Invalid operation';
                     res.json(responseObject);
                 } else {
                     const isBlocked = await privacyModel.isUserBlocked(data);
@@ -98,4 +98,57 @@ module.exports = {
             res.json(responseObject);
         }
     },
+
+    report : async (req, res) => {
+        const {id} = req.decodedObject;
+        const {blocked_id} = req.body;
+        const data =  {
+            user_id: id,
+            blocked_id
+        }
+        const responseObject = {
+            status: true,
+            message: ''
+        }
+
+        try {
+            const result = await profileModel.fetchUserWithId(blocked_id);
+            if (result !== undefined) {
+                if (blocked_id === id){
+                    responseObject.status = false;
+                    responseObject.message = 'Invalid operation';
+                    res.json(responseObject);
+                } else {
+                    const isBlocked = await privacyModel.isUserBlocked(data);
+                    const isBlocker = await privacyModel.isUserBlocker({user_id:blocked_id, blocked_id:id});
+                    if (isBlocked !== undefined || isBlocker !== undefined ) {
+                        responseObject.status = false;
+                        responseObject.message = 'Invalid operation';
+                        res.json(responseObject);
+                    } else {
+                        const {isReported} = await privacyModel.isReported(data);
+                        if (isReported > 0) {
+                            responseObject.status = false;
+                            responseObject.message = 'User is already reported';
+                            res.json(responseObject);
+                        } else {
+                            const response = await privacyModel.report(data);
+                            if (response === true) {
+                                responseObject.message = 'User has been successfuly reported';
+                                res.json(responseObject);
+                            }
+                        }
+                    }
+                }
+            } else {
+                responseObject.status = false;
+                responseObject.message = 'User does not exist';
+                res.json(responseObject);
+            }
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = `something went wrong Error: ${error}`;
+            res.json(responseObject);
+        }
+    }
 }

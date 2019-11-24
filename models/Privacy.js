@@ -79,5 +79,33 @@ module.exports = {
                     resolve(result);
             });
         });
+    },
+
+    report: (data) => {
+        return new Promise((resolve, reject) => {
+            const {user_id, blocked_id} = data;
+            const sql = 'INSERT INTO reports (user_id, reported_id) VALUES (?, ?)';
+            const values = [user_id, blocked_id];
+            databse.query(sql, values, (error, result) => {
+                if (error)
+                    return reject(error);
+                else
+                    resolve(true);
+            });
+        });
+    },
+
+    isReported: (data) => {
+        return new Promise((resolve, reject) => {
+            const {user_id, blocked_id} = data;
+            const sql = 'SELECT count(*) AS isReported FROM reports WHERE user_id = ? AND reported_id = ?';
+            const values = [user_id, blocked_id];
+            databse.query(sql, values, (error, result) => {
+                if (error)
+                    return reject(error);
+                else
+                    resolve(result[0]);
+            });
+        });
     }
 }
