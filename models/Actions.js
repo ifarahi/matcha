@@ -15,6 +15,20 @@ module.exports = {
         }); 
     },
 
+    matchUsers: (data) => {
+        return new Promise((resolve, reject) => {
+            const {ConnectedUser, RequestedUser} = data;
+            const sql = 'INSERT INTO matches (user_one, user_two) VALUES (?,?)';
+            const values = [ConnectedUser,RequestedUser];
+            database.query(sql, values, (error, result) => {
+                if (error)
+                    return reject(error);
+                else
+                    resolve(true);
+            });
+        });
+    },
+
     unMatchUsers: (data) => {
         return new Promise((resolve, reject) => {
             const {ConnectedUser, RequestedUser} = data;
@@ -43,12 +57,38 @@ module.exports = {
         });
     },
 
+    isLiker: (data) => {
+        return new Promise((resolve, reject) => {
+            const {ConnectedUser, RequestedUser} = data;
+            const sql = 'SELECT * FROM likes WHERE user_liked = ? AND user_likes = ?';
+            const values = [RequestedUser, ConnectedUser];
+            database.query(sql, values, (error, result) => {
+                if (error)
+                    return reject(error);
+                else
+                    resolve(result[0]);
+            });
+        });
+    },
+
     likeUser: (data) => {
         return new Promise((resolve, reject) => {
             const {ConnectedUser, RequestedUser} = data;
             const sql = 'INSERT INTO likes (user_liked, user_likes) VALUES (?,?)';
             const values = [ConnectedUser,RequestedUser];
             database.query(sql, values, (error, result) => {
+                if (error)
+                    return reject(error);
+                else
+                    resolve(true);
+            });
+        });
+    },
+
+    deleteLikeHistory: (id) => {
+        return new Promise((resolve, reject) => {
+            const sql = 'DELETE FROM likes WHERE id = ?';
+            database.query(sql, id, (error, result) => {
                 if (error)
                     return reject(error);
                 else

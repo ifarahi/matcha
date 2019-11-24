@@ -7,5 +7,6 @@ const {isProfileCompleted} = require('../../middleware/authorization');
 
 router.post('/likeUser', auth, isProfileCompleted, validation.actions, actionsController.likeUser);
 router.post('/unlikeUser', auth, isProfileCompleted, validation.actions, actionsController.unLikeUser);
+router.post('/unMatch', auth, isProfileCompleted, validation.actions, actionsController.unMatch);
 
 module.exports = router;

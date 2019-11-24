@@ -11,7 +11,8 @@ module.exports = {
             RequestedUser
         }
         responseObject = {
-            status: true
+            status: true,
+            isMatch: false
         }
 
         try {
@@ -28,7 +29,7 @@ module.exports = {
             const {isMatch} = await actionsModel.isMatch(data);
             if (isMatch > 0) {
                 responseObject.status = false;
-                responseObject.message = 'User is alreay a match';
+                responseObject.message = 'User is already a match';
                 res.json(responseObject);
                 return;
             }
@@ -65,10 +66,21 @@ module.exports = {
                 return;
             }
 
+            // match if the user is already liked the connected user
+            const isLiker = await actionsModel.isLiker(data);
 
-            await actionsModel.likeUser(data);
-            responseObject.message = 'Action has been successfuly performed';
-            res.json(responseObject);
+            if (isLiker === undefined) {  // if the requested user is not already liked the connected user just set new like
+                await actionsModel.likeUser(data);
+                responseObject.message = 'Action has been successfuly performed';
+                res.json(responseObject);
+
+            } else { // if the requested user is already liked the user set a match
+                await actionsModel.matchUsers(data);
+                await actionsModel.deleteLikeHistory(isLiker.id);
+                responseObject.isMatch = true;
+                responseObject.message = "Congratulations it's a match";
+                res.json(responseObject);
+            }
 
         } catch (error) {
             responseObject.status = false;
@@ -117,6 +129,56 @@ module.exports = {
             const result = await actionsModel.unLikeUser(data);
             responseObject.message = 'Action has been successfuly performed';
             res.json(responseObject);
+
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = error.message;
+            res.json(responseObject);
+        }
+    },
+
+    unMatch: async (req, res) => {
+        const {id:ConnectedUser} = req.decodedObject;
+        const {user_id:RequestedUser} = req.body;
+        const data = {
+            ConnectedUser,
+            RequestedUser
+        }
+        responseObject = {
+            status: true
+        }
+
+
+        try {
+
+            // if the user unmatched him self
+            if (ConnectedUser === RequestedUser) {
+                responseObject.status = false;
+                responseObject.message = 'Unvalid operation';
+                res.json(responseObject);
+                return;
+            }
+            // check if the given user is even exists
+            const userExists = await profileModel.fetchUserWithId(RequestedUser);
+            if (userExists === undefined) {
+                responseObject.status = false;
+                responseObject.message = 'Bad request user does not exist';
+                res.json(responseObject);
+                return;
+            }
+
+            // check if the given user is a valid match 
+            const {isMatch} = await actionsModel.isMatch(data);
+            if (isMatch > 0) {
+                await actionsModel.unMatchUsers(data);
+                responseObject.message = 'User is successfuly deleted from you matches list';
+                res.json(responseObject);
+            } else {
+                responseObject.status = false;
+                responseObject.message = 'Bad request user is not in your matches list';
+                res.json(responseObject);
+                return;
+            }
 
         } catch (error) {
             responseObject.status = false;
