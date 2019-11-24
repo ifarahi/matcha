@@ -45,9 +45,12 @@ module.exports = {
                         responseObject.message = 'User is already blocked';
                         res.json(responseObject);
                     } else {
+                        // if the user the blocked user is already a match delete it from the match table
                         const {isMatch} = await actionsModel.isMatch({ConnectedUser: id, RequestedUser: blocked_id});
                         if (isMatch > 0)
                             await actionsModel.unMatchUsers({ConnectedUser: id, RequestedUser: blocked_id});
+                        // if the user is already liked delete from the likes table
+                        await actionsModel.unLikeUser({ConnectedUser: id, RequestedUser: blocked_id});
                         const response = await privacyModel.blockUser(data);
                         if (response === true) {
                             responseObject.message = 'User has been successfuly blocked';
