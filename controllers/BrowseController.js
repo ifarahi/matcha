@@ -14,22 +14,6 @@ module.exports = {
             status: true,
         }
 
-        // if the user profile not completed cannot update this information the request should be end
-        try {
-            const {is_first_visit} = await browseModel.fetchUserProfile(id);
-            if (is_first_visit !== 0){
-                responseObject.status = false;
-                responseObject.message = 'You need to complete your profile';
-                res.json(responseObject);
-                return;
-            }
-        } catch (error) {
-            responseObject.status = false;
-            responseObject.message = `something went wrong Error: ${error}`;
-            res.json(responseObject);
-            return ;
-        }
-
         try {
             let profiles = await browseModel.fetchProfiles(id);
             const blocked = await privacyModel.getBlockedList(id);

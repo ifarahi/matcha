@@ -4,8 +4,9 @@ const validation = require('../../middleware/validation');
 const auth = require('../../middleware/auth');
 const browseFilter = require('../../middleware/browseFilter');
 const browseController = require('../../controllers/BrowseController');
+const {isProfileCompleted} = require('../../middleware/authorization');
 
-router.post('/fetchProfiles', auth, validation.fetchProfiles, browseFilter, browseController.fetchProfiles);
-router.post('/fetchUserProfile', auth, validation.fetchUserProfile, browseController.fetchUserProfile);
+router.post('/fetchProfiles', auth,  isProfileCompleted, validation.fetchProfiles, browseFilter, browseController.fetchProfiles);
+router.post('/fetchUserProfile', auth, isProfileCompleted, validation.fetchUserProfile, browseController.fetchUserProfile);
 
 module.exports = router;

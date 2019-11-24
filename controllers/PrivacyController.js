@@ -15,22 +15,6 @@ module.exports = {
             message: ''
         }
 
-        // if the user profile not completed cannot update this information the request should be end
-        try {
-            const {is_first_visit} = await profileModel.fetchUserWithId(id);
-            if (is_first_visit !== 0){
-                responseObject.status = false;
-                responseObject.message = 'You need to complete your profile';
-                res.json(responseObject);
-                return;
-            }
-        } catch (error) {
-            responseObject.status = false;
-            responseObject.message = 'error';
-            res.json(responseObject);
-            return ;
-        }
-
         try {
             const result = await profileModel.fetchUserWithId(blocked_id);
             if (result !== undefined) {
@@ -80,22 +64,6 @@ module.exports = {
         const responseObject = {
             status: true,
             message: ''
-        }
-        
-        // if the user profile not completed cannot update this information the request should be end
-        try {
-            const {is_first_visit} = await profileModel.fetchUserWithId(id);
-            if (is_first_visit !== 0){
-                responseObject.status = false;
-                responseObject.message = 'You need to complete your profile';
-                res.json(responseObject);
-                return;
-            }
-        } catch (error) {
-            responseObject.status = false;
-            responseObject.message = 'error';
-            res.json(responseObject);
-            return ;
         }
 
         try {

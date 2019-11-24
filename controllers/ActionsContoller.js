@@ -83,6 +83,10 @@ module.exports = {
         responseObject = {
             status: true
         }
+        const data = {
+            ConnectedUser,
+            RequestedUser
+        }
 
         try {
 

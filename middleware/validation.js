@@ -232,6 +232,44 @@ module.exports = {
         })
     },
 
+    actions: (req, res, next) => {
+        const {user_id} = req.body;
+        const errorObject = {
+            status: false
+        }
+
+        if (user_id === undefined){
+            errorObject.message = "you need to enter the user id";
+            res.json(errorObject);
+            return;
+        } else {
+            if (!Number.isInteger(user_id)) {
+                errorObject.message = "please enter a valid user id";
+                res.json(errorObject);
+                return;
+            }
+        }
+    },
+
+    privacy: (req, res, next) => {
+        const {user_id} = req.body;
+        const errorObject = {
+            status: false
+        }
+
+        if (blocked_id === undefined){
+            errorObject.message = "you need to enter the user id";
+            res.json(errorObject);
+            return;
+        } else {
+            if (!Number.isInteger(blocked_id)) {
+                errorObject.message = "please enter a valid user id";
+                res.json(errorObject);
+                return;
+            }
+        }
+    },
+
     tags: async (req, res, next) => {
         //Tags object needed for vivo validate
         const tags = {
