@@ -61,7 +61,7 @@ module.exports = {
         const { username } = req.body;
         const {id:connected} = req.decodedObject;
         const responseObject = {
-            status: true
+            status: true,
         }
         // console.log(id)
         try {
@@ -70,8 +70,8 @@ module.exports = {
             const userExists = await userModel.usernameExists(username);
             if (userExists < 1) {
                 responseObject.status = false;
-                responseObject.message = 'Bad request';
-                res.json(responseObject);
+                responseObject.message = 'User does not exists';
+                res.status(404).json(responseObject);
 
             } else {
 
@@ -89,7 +89,7 @@ module.exports = {
                 if (isUserBlocked !== undefined || isUserBlocker !== undefined){
                     responseObject.status = false;
                     responseObject.message = 'Unauthorized page';
-                    res.json(responseObject);
+                    res.status(401).json(responseObject);
                     return;
                 }
 

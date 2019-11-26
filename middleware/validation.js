@@ -158,7 +158,7 @@ module.exports = {
         if (filter !== undefined) {
             if (filter.age !== undefined){
                 if (Array.isArray(filter.age)) {
-                    if (!Number.isInteger(filter.age[0]) || !Number.isInteger(filter.age[1])) {
+                    if (isNaN(filter.age[0]) || isNaN(filter.age[1])) {
                         errorObject.message = 'Unvalid age filter values must be a valid numbers';
                         res.json(errorObject);
                         return;
@@ -170,7 +170,7 @@ module.exports = {
                 }
             }
             if (filter.commonTags !== undefined) {
-                if (!Number.isInteger(filter.commonTags)) {
+                if (isNaN(filter.commonTags)) {
                     errorObject.message = 'Unvalid common tags filter values must be a valid numbers';
                     res.json(errorObject);
                     return;
@@ -192,7 +192,7 @@ module.exports = {
                 }
             }
             if (filter.distance !== undefined) {
-                if (!Number.isInteger(filter.distance)) {
+                if (isNaN(filter.distance)) {
                     errorObject.message = 'Unvalid distance filter values must be a valid numbers';
                     res.json(errorObject);
                     return;
@@ -200,7 +200,7 @@ module.exports = {
             }
             if (filter.rating !== undefined){
                 if (Array.isArray(filter.rating)) {
-                    if (!Number.isInteger(filter.rating[0]) || !Number.isInteger(filter.rating[0])) {
+                    if (isNaN(filter.rating[0]) || isNaN(filter.rating[0])) {
                         errorObject.message = 'Unvalid rating filter values must be a valid numbers';
                         res.json(errorObject);
                         return;
@@ -243,7 +243,7 @@ module.exports = {
             res.json(errorObject);
             return;
         } else {
-            if (!Number.isInteger(user_id)) {
+            if (isNaN(user_id)) {
                 errorObject.message = "please enter a valid user id";
                 res.json(errorObject);
                 return;
