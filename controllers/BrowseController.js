@@ -63,7 +63,8 @@ module.exports = {
         const responseObject = {
             status: true,
         }
-        // console.log(id)
+
+
         try {
 
             // check if the user is exists
@@ -119,5 +120,29 @@ module.exports = {
             res.json(responseObject);
         }
 
+    },
+
+    isLike: async (req, res) => {
+        const { user_id } = req.body;
+        const {id} = req.decodedObject;
+        const responseObject = {
+            status: true,
+        }
+
+        try {
+            const {isLike} = await browseModel.isLike({id, user_id});
+            if (isLike > 0) {
+                responseObject.message = 'User is already on your likes list';
+                res.json(responseObject);
+            } else {
+                responseObject.status = false;
+                responseObject.message = 'User is not on your likes list';
+                res.json(responseObject);
+            }
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = error.message;
+            res.json(responseObject);
+        }
     }
 }

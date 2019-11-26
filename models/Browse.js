@@ -62,6 +62,20 @@ module.exports = {
                     resolve(result);
             });
         });
+    },
+
+    isLike: (data) => {
+        return new Promise((resolve, reject) => {
+            const {id, user_id} = data;
+            const sql = 'SELECT count(*) AS isLike FROM likes WHERE user_liked = ? AND user_likes = ?';
+            const values = [id, user_id];
+            database.query(sql, values, (error, result) => {
+                if (error)
+                    return reject(error);
+                else
+                    resolve(result[0]);
+            });
+        });
     }
 
 }
