@@ -29,7 +29,7 @@ module.exports = {
 
             // filter profiles list from blocked profiles
             profiles = await browseHelper.filterBlocked({profiles, blocked});
-
+            
             // filter profiles list from blockers profiles
             profiles = await browseHelper.filterBlockers({profiles, blockers});
 
@@ -97,12 +97,13 @@ module.exports = {
                 userProfile.tags = await tagsModel.userGetTags(userProfile.id);
                 // set user tags on array instad of array object
                 userProfile.tags = userProfile.tags.map(elm => elm.name);
-    
-    
-                // fetch user location with the given geoLocation
-                const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.GOOGLE_API_KEY}`);
-                const data = await response.json();
-                userProfile.location = data.results[0].formatted_address;
+
+                if (longitude !== '0' && longitude !== '0') {
+                    // fetch user location with the given geoLocation
+                    const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${process.env.GOOGLE_API_KEY}`);
+                    const data = await response.json();
+                    userProfile.location = data.results[0].formatted_address;
+                }
     
                 // fetch user images 
                 const userImages = await profileModel.getUserImages(requested);

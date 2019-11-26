@@ -65,7 +65,7 @@ module.exports = {
                 let exists = true;
 
                 userLikes.forEach((elm) => {
-                    if (elm.user_liked == profile.id)
+                    if (elm.user_likes == profile.id)
                         exists = false;
                 });
                 return exists;
