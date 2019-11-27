@@ -1,29 +1,40 @@
 let connectedUsers = [];
 
-const addToConnectedUsers = ( user, socket_id ) => {
-    let existingUser = findConnectedUser( user );
+const addToConnectedUsers = ( userId, username, socketId ) => {
+    let existingUser = findConnectedUser( userId );
     if ( existingUser === null )
-        if ( user.length >= 3 && socket_id.length >= 3 )
-            connectedUsers.push( { user, socket_id } );
+        if ( username.length >= 3 && socketId.length >= 3 )
+            connectedUsers.push( { userId, username, socketId } );
     console.log(connectedUsers);
 }
 
-const findConnectedUser = ( user ) => {
+const findConnectedUser = ( userId ) => {
     for( i = 0; i < connectedUsers.length; i++ )
-        if ( connectedUsers[ i ].user === user )
+        if ( connectedUsers[ i ].userId === userId )
             return connectedUsers[ i ];
     return null;
 }
 
-const removeConnectedUser = ( user ) => {
+const removeConnectedUser = ( userId ) => {
     connectedUsers = connectedUsers.filter( e => {
-        console.log( e );
-        return ( e.user !== user );
+        return ( e.userId !== userId );
     })
+}
+
+const removeConnectedSocket = ( socketId ) => {
+    connectedUsers = connectedUsers.filter( e => {
+        return ( e.socketId !== socketId );
+    })
+}
+
+const getConnectedUsers = () => {
+    return connectedUsers;
 }
 
 module.exports = {
     addToConnectedUsers,
     findConnectedUser,
-    removeConnectedUser
+    removeConnectedUser,
+    removeConnectedSocket,
+    getConnectedUsers
 }
