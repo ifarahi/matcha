@@ -1,6 +1,7 @@
 const browseModel = require('../models/Browse');
 const privacyModel = require('../models/Privacy');
 const profileModel = require('../models/Profile');
+const actionsModel = require('../models/Actions');
 const userModel = require('../models/Users');
 const tagsModel = require('../models/Tags');
 const browseHelper = require('../helpers/browseHelper');
@@ -137,6 +138,31 @@ module.exports = {
             } else {
                 responseObject.status = false;
                 responseObject.message = 'User is not on your likes list';
+                res.json(responseObject);
+            }
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = error.message;
+            res.json(responseObject);
+        }
+    },
+
+    isMatch: async (req, res) => {
+        const { user_id } = req.body;
+        const {id} = req.decodedObject;
+        const responseObject = {
+            status: true,
+        }
+
+        try {
+            const {isMatch} = await actionsModel.isMatch({ConnectedUser: id, RequestedUser: user_id});
+
+            if (isMatch > 0) {
+                responseObject.message = 'User is a match';
+                res.json(responseObject);
+            } else {
+                responseObject.status = false;
+                responseObject.message = 'User is not on your matches list';
                 res.json(responseObject);
             }
         } catch (error) {

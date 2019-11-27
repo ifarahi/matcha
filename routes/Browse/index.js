@@ -9,5 +9,6 @@ const {isProfileCompleted} = require('../../middleware/authorization');
 router.post('/fetchProfiles', auth,  isProfileCompleted, validation.fetchProfiles, browseFilter, browseController.fetchProfiles);
 router.post('/fetchUserProfile', auth, isProfileCompleted, validation.fetchUserProfile, browseController.fetchUserProfile);
 router.post('/islike', auth, browseController.isLike);
+router.post('/isMatch', auth, browseController.isMatch);
 
 module.exports = router;

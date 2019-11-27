@@ -263,7 +263,7 @@ module.exports = {
             res.json(errorObject);
             return;
         } else {
-            if (!Number.isInteger(blocked_id)) {
+            if (isNaN(blocked_id)) {
                 errorObject.message = "please enter a valid user id";
                 res.json(errorObject);
                 return;
