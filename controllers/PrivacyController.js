@@ -1,5 +1,6 @@
 const privacyModel = require('../models/Privacy');
 const profileModel = require('../models/Profile');
+const actionsModel = require('../models/Actions');
 
 module.exports = {
     blockUser: async (req, res) => {
@@ -14,28 +15,12 @@ module.exports = {
             message: ''
         }
 
-        // if the user profile not completed cannot update this information the request should be end
-        try {
-            const {is_first_visit} = await profileModel.fetchUserWithId(id);
-            if (is_first_visit !== 0){
-                responseObject.status = false;
-                responseObject.message = 'You need to complete your profile';
-                res.json(responseObject);
-                return;
-            }
-        } catch (error) {
-            responseObject.status = false;
-            responseObject.message = 'error';
-            res.json(responseObject);
-            return ;
-        }
-
         try {
             const result = await profileModel.fetchUserWithId(blocked_id);
             if (result !== undefined) {
                 if (blocked_id === id){
                     responseObject.status = false;
-                    responseObject.message = 'Unvalid operation';
+                    responseObject.message = 'Invalid operation';
                     res.json(responseObject);
                 } else {
                     const isBlocked = await privacyModel.isUserBlocked(data);
@@ -44,6 +29,12 @@ module.exports = {
                         responseObject.message = 'User is already blocked';
                         res.json(responseObject);
                     } else {
+                        // if the user the blocked user is already a match delete it from the match table
+                        const {isMatch} = await actionsModel.isMatch({ConnectedUser: id, RequestedUser: blocked_id});
+                        if (isMatch > 0)
+                            await actionsModel.unMatchUsers({ConnectedUser: id, RequestedUser: blocked_id});
+                        // if the user is already liked delete from the likes table
+                        await actionsModel.unLikeUser({ConnectedUser: id, RequestedUser: blocked_id});
                         const response = await privacyModel.blockUser(data);
                         if (response === true) {
                             responseObject.message = 'User has been successfuly blocked';
@@ -74,29 +65,13 @@ module.exports = {
             status: true,
             message: ''
         }
-        
-        // if the user profile not completed cannot update this information the request should be end
-        try {
-            const {is_first_visit} = await profileModel.fetchUserWithId(id);
-            if (is_first_visit !== 0){
-                responseObject.status = false;
-                responseObject.message = 'You need to complete your profile';
-                res.json(responseObject);
-                return;
-            }
-        } catch (error) {
-            responseObject.status = false;
-            responseObject.message = 'error';
-            res.json(responseObject);
-            return ;
-        }
 
         try {
             const result = await profileModel.fetchUserWithId(blocked_id);
             if (result !== undefined) {
                 if (blocked_id === id){
                     responseObject.status = false;
-                    responseObject.message = 'Unvalid operation';
+                    responseObject.message = 'Invalid operation';
                     res.json(responseObject);
                 } else {
                     const isBlocked = await privacyModel.isUserBlocked(data);
@@ -123,4 +98,76 @@ module.exports = {
             res.json(responseObject);
         }
     },
+
+    report : async (req, res) => {
+        const {id} = req.decodedObject;
+        const {blocked_id} = req.body;
+        const data =  {
+            user_id: id,
+            blocked_id
+        }
+        const responseObject = {
+            status: true,
+            message: ''
+        }
+
+        try {
+            const result = await profileModel.fetchUserWithId(blocked_id);
+            if (result !== undefined) {
+                if (blocked_id === id){
+                    responseObject.status = false;
+                    responseObject.message = 'Invalid operation';
+                    res.json(responseObject);
+                } else {
+                    const isBlocked = await privacyModel.isUserBlocked(data);
+                    const isBlocker = await privacyModel.isUserBlocker({user_id:blocked_id, blocked_id:id});
+                    if (isBlocked !== undefined || isBlocker !== undefined ) {
+                        responseObject.status = false;
+                        responseObject.message = 'Invalid operation';
+                        res.json(responseObject);
+                    } else {
+                        const {isReported} = await privacyModel.isReported(data);
+                        if (isReported > 0) {
+                            responseObject.status = false;
+                            responseObject.message = 'User is already reported';
+                            res.json(responseObject);
+                        } else {
+                            const response = await privacyModel.report(data);
+                            if (response === true) {
+                                responseObject.message = 'User has been successfuly reported';
+                                res.json(responseObject);
+                            }
+                        }
+                    }
+                }
+            } else {
+                responseObject.status = false;
+                responseObject.message = 'User does not exist';
+                res.json(responseObject);
+            }
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = `something went wrong Error: ${error}`;
+            res.json(responseObject);
+        }
+    },
+
+    getBlockedList: async (req, res) => {
+        const {id} = req.decodedObject;
+        responseObject = {
+            status: true,
+            blockedList: []
+        }
+
+        try {
+            const blockedList = await privacyModel.getBlockedList(id);
+            responseObject.blockedList = blockedList;
+            res.json(responseObject);
+            
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = `something went wrong Error: ${error}`;
+            res.json(responseObject);
+        }
+    }
 }

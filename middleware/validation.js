@@ -149,6 +149,129 @@ module.exports = {
         })
     },
 
+    fetchProfiles: (req, res, next) => {
+        const filter = req.body.filter;
+        errorObject = {
+            status: false
+        }
+
+        if (filter !== undefined) {
+            if (filter.age !== undefined){
+                if (Array.isArray(filter.age)) {
+                    if (isNaN(filter.age[0]) || isNaN(filter.age[1])) {
+                        errorObject.message = 'Unvalid age filter values must be a valid numbers';
+                        res.json(errorObject);
+                        return;
+                    }
+                } else {
+                    errorObject.message = 'Unvalid age filter value';
+                    res.json(errorObject);
+                    return;
+                }
+            }
+            if (filter.commonTags !== undefined) {
+                if (isNaN(filter.commonTags)) {
+                    errorObject.message = 'Unvalid common tags filter values must be a valid numbers';
+                    res.json(errorObject);
+                    return;
+                }
+            }
+            if (filter.tags !== undefined) {
+                if (Array.isArray(filter.tags)) {
+                    filter.tags.forEach((Element) => {
+                        if (!/^[a-z0-9]{2,10}$/.test(Element)) {
+                            errorObject.message = 'Unvalid tag filter';
+                            res.json(errorObject);
+                            return;
+                        }
+                    });
+                } else {
+                    errorObject.message = 'Unvalid tags filter value';
+                    res.json(errorObject);
+                    return;
+                }
+            }
+            if (filter.distance !== undefined) {
+                if (isNaN(filter.distance)) {
+                    errorObject.message = 'Unvalid distance filter values must be a valid numbers';
+                    res.json(errorObject);
+                    return;
+                }
+            }
+            if (filter.rating !== undefined){
+                if (Array.isArray(filter.rating)) {
+                    if (isNaN(filter.rating[0]) || isNaN(filter.rating[0])) {
+                        errorObject.message = 'Unvalid rating filter values must be a valid numbers';
+                        res.json(errorObject);
+                        return;
+                    }
+                } else {
+                    errorObject.message = 'Unvalid age filter value';
+                    res.json(errorObject);
+                    return;
+                }
+            }
+        }
+        next();
+    },
+
+    fetchUserProfile: (req, res, next) => {
+        const username = req.body.username;
+        errorObject = {
+            status: false
+        }
+        const schema = {
+            username: vivo.string().alpha().required().min(5).max(20)
+        }
+
+        vivo.validate(schema, {username})
+        .then(body => next())
+        .catch((error) => {
+            errorObject.details = error.details;
+            res.json(errorObject);
+        })
+    },
+
+    actions: (req, res, next) => {
+        const {user_id} = req.body;
+        const errorObject = {
+            status: false
+        }
+
+        if (user_id === undefined){
+            errorObject.message = "you need to enter the user id";
+            res.json(errorObject);
+            return;
+        } else {
+            if (isNaN(user_id)) {
+                errorObject.message = "please enter a valid user id";
+                res.json(errorObject);
+                return;
+            }
+        }
+        next();
+    },
+
+    privacy: (req, res, next) => {
+        const {blocked_id} = req.body;
+        const errorObject = {
+            status: false
+        }
+
+        if (blocked_id === undefined){
+            errorObject.message = "you need to enter the user id";
+            res.json(errorObject);
+            return;
+        } else {
+            if (!Number.isInteger(blocked_id)) {
+                errorObject.message = "please enter a valid user id";
+                res.json(errorObject);
+                return;
+            }
+        }
+        next();
+    },
+
     tags: async (req, res, next) => {
         //Tags object needed for vivo validate
         const tags = {

@@ -191,7 +191,33 @@ ALTER TABLE `user_tags`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+DROP FUNCTION IF EXISTS f_fameRating;
+DELIMITER //
+CREATE FUNCTION f_fameRating(userId INT)
+RETURNS INT
+BEGIN
+	DECLARE rating INT;
 
+	SELECT COUNT(*) INTO @matchesCount FROM `matches` WHERE userId IN (`user_one`, `user_two`);
+	SELECT COUNT(*) INTO @likesCount FROM `likes` WHERE `user_likes` = userId;
+	SELECT COUNT(*) INTO @likedCount FROM `likes` WHERE `user_liked` = userId;
+	SET rating = 0;
+
+	IF @matchesCount >= 10 THEN
+		SET rating = rating + 1;
+	END IF;
+	IF @likesCount >= 20 THEN
+		SET rating = rating + 1;
+	END IF;
+	IF @likedCount >= 20 THEN
+		SET rating = rating + 1;
+	END IF;
+    IF rating = 3 THEN
+		SET rating = rating + 1;
+	END IF;
+	RETURN rating;
+END;
+//
 --
 -- AUTO_INCREMENT for table `blocks`
 --
