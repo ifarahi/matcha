@@ -5,15 +5,16 @@ const cors = require('cors');
 
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
-const socketHelpers = require("./helpers/socketHelpers");
+const socketHandler = require('./helpers/socketHandler');
 
- 
+
 app.use(cors());// Enables cors ( cross origin resources sharing )
 app.use(express.static('public')); // serves static assets 
 app.use(express.json()); // parse the body wich is contain a json object then pass controll the the router
 app.use(router); // all requests will be hanlled by the router
 
 app.use((err, req, res, next) => {
+    res.io = io;
     res.status(400).json({
         status: false,
         message: err.message
@@ -22,15 +23,8 @@ app.use((err, req, res, next) => {
 
 port = process.env.PORT || 3000; // if there any port number has been exported in the env will be used if not 3000 is the default
 
-io.on('connection', function(socket){
-    console.log('a user has beeen connected');
-    socket.on('join', ( { user } ) => {
-        socketHelpers.addToConnectedUsers ( user, socket.conn.id );
-    })
-    socket.on('leave', ( { user } ) => {
-        console.log("user left " + user );
-        socketHelpers.removeConnectedUser( user );
-    })
+io.on('connection', function( socket ){
+    socketHandler( io, socket );
 });
 
 

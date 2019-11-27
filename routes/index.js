@@ -17,4 +17,11 @@ router.use('/setting', Setting);
 router.use('/Browse', Browse);
 router.use('/Privacy', Privacy);
 
+// router.use('/', ( req, res ) => {
+//     console.log('test')
+//     res.io.on( 'connection', ( socket ) => {
+//         console.log( `A user has been connected ${ socket.conn.id }` );
+//     })
+// })
+
 module.exports = router;
