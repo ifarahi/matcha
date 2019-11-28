@@ -1,6 +1,7 @@
 const privacyModel = require('../models/Privacy');
 const profileModel = require('../models/Profile');
 const actionsModel = require('../models/Actions');
+const _ = require('lodash');
 
 module.exports = {
     blockUser: async (req, res) => {
@@ -160,10 +161,58 @@ module.exports = {
         }
 
         try {
-            const blockedList = await privacyModel.getBlockedList(id);
+
+            // get the users list
+            let blockedList = await privacyModel.getBlockedList(id);
+
+            blockedList = 
+
             responseObject.blockedList = blockedList;
             res.json(responseObject);
             
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = `something went wrong Error: ${error}`;
+            res.json(responseObject);
+        }
+    },
+
+    getBlockedUserInfo: async (req, res) => {
+        const {id} = req.decodedObject;
+        const {blocked_id} = req.body;
+        const data =  {
+            user_id: id,
+            blocked_id
+        }
+        const responseObject = {
+            status: true,
+        }
+
+        try {
+            const result = await profileModel.fetchUserWithId(blocked_id);
+            if (result !== undefined) {
+                if (blocked_id === id){
+                    responseObject.status = false;
+                    responseObject.message = 'Invalid operation';
+                    res.json(responseObject);
+                } else {
+                    const isBlocked = await privacyModel.isUserBlocked(data);
+                    if (isBlocked !== undefined) {
+                        const userInfo = await privacyModel.getBlockedUserInfo(blocked_id);
+                        responseObject.userInfo = _.pick(userInfo, ['firstname','lastname', 'username', 'profile_picture']);
+                        res.json(responseObject);
+                    } else {
+                        responseObject.status = false;
+                        responseObject.message = 'User is not on your blocked list';
+                        res.json(responseObject);
+                    }
+                }
+            } else {
+                responseObject.status = false;
+                responseObject.message = 'User does not exist';
+                res.json(responseObject);
+            }
+
         } catch (error) {
             responseObject.status = false;
             responseObject.message = `something went wrong Error: ${error}`;

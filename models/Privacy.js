@@ -107,5 +107,17 @@ module.exports = {
                     resolve(result[0]);
             });
         });
+    },
+
+    getBlockedUserInfo: (id) => {
+        return new Promise((resolve, reject) => {
+            const sql = 'SELECT * FROM users WHERE id = ?';
+            databse.query(sql, [id], (error, result) => {
+                if (error)
+                    return reject(error);
+                else
+                    resolve(result[0]);
+            });
+        });
     }
 }
