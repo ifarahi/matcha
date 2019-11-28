@@ -10,5 +10,6 @@ router.post('/fetchProfiles', auth,  isProfileCompleted, validation.fetchProfile
 router.post('/fetchUserProfile', auth, isProfileCompleted, validation.fetchUserProfile, browseController.fetchUserProfile);
 router.post('/islike', auth, browseController.isLike);
 router.post('/isMatch', auth, browseController.isMatch);
+router.get('/getUserMatches', auth, browseController.getUserMatches);
 
 module.exports = router;

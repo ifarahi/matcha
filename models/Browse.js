@@ -34,7 +34,7 @@ module.exports = {
                 if (error)
                     reject(error);
                 else
-                    resolve(result[0]);
+                    resolve(result);
             });
         });
     },
@@ -76,6 +76,18 @@ module.exports = {
                     resolve(result[0]);
             });
         });
-    }
+    },
 
+    getMatchedProfiles: (id) => {
+        return new Promise((resolve, reject) => {
+            const fields = "users.`id`, users.`firstname`, users.`lastname`, users.`username`, users.`gender`, users.`email`, users.`profile_picture`, users.`longitude`, users.`latitude`, users.`is_verified`, users.`is_first_visit`, users.`bio`, users.`sexual_preferences`";
+            const sql = `SELECT ${fields} FROM matches JOIN users ON (user_one = ? AND user_two = users.id) OR (user_two = ? AND user_one = users.id)`;
+            database.query(sql, [ id, id ], (error, result) => {
+                if (error)
+                    reject(error);
+                else
+                    resolve(result);
+            });
+        });
+    },
 }

@@ -46,13 +46,17 @@ module.exports = {
         return new Promise( async (resolve, reject) => {
             const {profiles, id} = data;
             const matches = await browseModel.fetchMatchedProfiles(id);
-            if (matches === undefined) 
+
+            if (matches.length < 1) 
                 return resolve(profiles);
             const filtredList = profiles.filter((profile) => {
-                if ((profile.id !== matches.user_one) && (profile.id !== matches.user_two))
-                    return true;
-                else
-                    return false;
+                let exists = true;
+
+                matches.forEach(match => {
+                    if ((profile.id == match.user_one) || (profile.id === match.user_two))
+                        exists = false;
+                });
+                return exists;
             });
             resolve(filtredList);
         })
