@@ -111,6 +111,9 @@ module.exports = {
                 const userImages = await profileModel.getUserImages(requested);
                 userProfile.images = userImages.map(elm => elm.image);
     
+                // recored the visit history
+                await actionsModel.setAsVisited({visitor: connected, visited: userProfile.id});
+
                 responseObject.userProfile = userProfile;
                 res.json(responseObject);
             }

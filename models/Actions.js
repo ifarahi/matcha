@@ -109,5 +109,19 @@ module.exports = {
                     resolve(true);
             });
         })
+    },
+
+    setAsVisited: (data) => {
+        return new Promise((resolve, reject) => {
+            const {visitor, visited} = data;
+            const sql  = 'INSERT INTO visits (visitor, visited) VALUES (?, ?)';
+            const values = [visitor, visited];
+            database.query(sql, values, (error, result) => {
+                if (error)
+                    return reject(error);
+                else
+                    resolve(result);
+            });
+        });
     }
 }
