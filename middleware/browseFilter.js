@@ -5,7 +5,7 @@ module.exports = (req, res, next) => {
         commonTags: 0,
         tags: [],
         distance: 37,
-        rating: [0, 1]
+        rating: [0, 4]
     }
     if (filter !== undefined) {
         if (filter.age === undefined){

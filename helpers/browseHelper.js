@@ -139,7 +139,9 @@ module.exports = {
                 filtredList = filtredList.filter((profile) => {
                     if (tags.length > 0)
                         return _.intersection(tags, profile.tags).length == tags.length;
-                    return _.intersection(userTags, profile.tags).length >= commonTags;
+                    const fetchedCommonTagsNumber = _.intersection(userTags, profile.tags).length; // to be added on the user profile
+                    profile.commonTags = fetchedCommonTagsNumber; // added common tags number with every profile
+                    return fetchedCommonTagsNumber >= commonTags;
                 });
 
                 filtredList = filtredList.filter((profile) => profile.rating >= rating[0] && profile.rating <= rating[1]);
