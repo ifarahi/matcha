@@ -192,5 +192,23 @@ module.exports = {
             responseObject.message = error.message;
             res.json(responseObject);
         }
+    },
+
+    fetchTags: async (req, res) => {
+        const responseObject = {
+            status: true,
+            tags: []
+        }
+
+        try {
+
+            const matchedProfiles = await browseModel.fetchTags();
+            responseObject.tags = matchedProfiles;
+            res.json(responseObject);
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = error.message;
+            res.json(responseObject);
+        }
     }
 }

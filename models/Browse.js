@@ -90,4 +90,16 @@ module.exports = {
             });
         });
     },
+
+    fetchTags: () => {
+        return new Promise((resolve, reject) => {
+            const sql = 'SELECT name FROM tags';
+            database.query(sql,null, (error, result) => {
+                if (error)
+                    return reject(error);
+                else
+                    resolve(result);
+            });
+        })
+    }
 }

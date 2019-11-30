@@ -11,5 +11,6 @@ router.post('/fetchUserProfile', auth, isProfileCompleted, validation.fetchUserP
 router.post('/islike', auth, isProfileCompleted, browseController.isLike);
 router.post('/isMatch', auth, isProfileCompleted, browseController.isMatch);
 router.get('/getUserMatches', auth, isProfileCompleted, browseController.getUserMatches);
+router.get('/fetchTags', auth, isProfileCompleted, browseController.fetchTags);
 
 module.exports = router;
