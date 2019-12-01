@@ -91,6 +91,32 @@ module.exports = {
         });
     },
 
+    getProfilesLikes: (id) => {
+        return new Promise((resolve, reject) => {
+            const fields = "users.`id`, users.`firstname`, users.`lastname`, users.`username`, users.`gender`, users.`email`, users.`profile_picture`, users.`longitude`, users.`latitude`, users.`is_verified`, users.`is_first_visit`, users.`bio`, users.`sexual_preferences`";
+            const sql = `SELECT ${fields} FROM likes JOIN users ON (user_liked = ? AND user_likes = users.id)`;
+            database.query(sql, id, (error, result) => {
+                if (error)
+                    reject(error);
+                else
+                    resolve(result);
+            });
+        });
+    },
+
+    getProfilesLiked: (id) => {
+        return new Promise((resolve, reject) => {
+            const fields = "users.`id`, users.`firstname`, users.`lastname`, users.`username`, users.`gender`, users.`email`, users.`profile_picture`, users.`longitude`, users.`latitude`, users.`is_verified`, users.`is_first_visit`, users.`bio`, users.`sexual_preferences`";
+            const sql = `SELECT ${fields} FROM likes JOIN users ON (user_likes = ? AND user_liked = users.id)`;
+            database.query(sql, id, (error, result) => {
+                if (error)
+                    reject(error);
+                else
+                    resolve(result);
+            });
+        });
+    },
+
     fetchTags: () => {
         return new Promise((resolve, reject) => {
             const sql = 'SELECT name FROM tags';

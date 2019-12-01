@@ -194,6 +194,44 @@ module.exports = {
         }
     },
 
+    getUserlikes: async (req, res) => {
+        const {id} = req.decodedObject;
+        const responseObject = {
+            status: true,
+            likes: []
+        }
+
+        try {
+
+            const matchedProfiles = await browseModel.getProfilesLikes(id);
+            responseObject.likes = matchedProfiles;
+            res.json(responseObject);
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = error.message;
+            res.json(responseObject);
+        }
+    },
+
+    getUserliked: async (req, res) => {
+        const {id} = req.decodedObject;
+        const responseObject = {
+            status: true,
+            likes: []
+        }
+
+        try {
+
+            const matchedProfiles = await browseModel.getProfilesLiked(id);
+            responseObject.likes = matchedProfiles;
+            res.json(responseObject);
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = error.message;
+            res.json(responseObject);
+        }
+    },
+
     fetchTags: async (req, res) => {
         const responseObject = {
             status: true,
