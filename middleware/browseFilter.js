@@ -5,8 +5,10 @@ module.exports = (req, res, next) => {
         commonTags: 0,
         tags: [],
         distance: 37,
+        location: null,
         rating: [0, 4]
     }
+
     if (filter !== undefined) {
         if (filter.age === undefined){
             filter.age = defaultFilter.age;
@@ -16,6 +18,9 @@ module.exports = (req, res, next) => {
         }
         if (filter.distance === undefined) {
             filter.distance = defaultFilter.distance;
+        }
+        if (filter.location === undefined) {
+            filter.location = defaultFilter.location;
         }
         if (filter.rating === undefined) {
             filter.rating = defaultFilter.rating;
