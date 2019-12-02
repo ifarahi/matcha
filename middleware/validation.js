@@ -156,6 +156,11 @@ module.exports = {
         }
 
         if (filter !== undefined) {
+            if (typeof(filter) !== "object"){
+                req.body.filter = undefined;
+                next();
+                return;
+            }
             if (filter.age !== undefined){
                 if (Array.isArray(filter.age)) {
                     if (isNaN(filter.age[0]) || isNaN(filter.age[1])) {
@@ -230,6 +235,27 @@ module.exports = {
             errorObject.details = error.details;
             res.json(errorObject);
         })
+    },
+
+    validUserId: (req, res, next) => {
+        const id = req.body.user_id;
+        errorObject = {
+            status: false
+        }
+
+        if (id !== undefined) {
+            if(isNaN(id)){
+                errorObject.message = 'Invalid user id';
+                res.json(errorObject);
+                return;
+            } else {
+                next();
+            }
+        } else {
+            errorObject.message = 'User id is required';
+            res.json(errorObject);
+            return;
+        }
     },
 
     actions: (req, res, next) => {

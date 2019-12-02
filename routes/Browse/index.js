@@ -8,8 +8,8 @@ const {isProfileCompleted} = require('../../middleware/authorization');
 
 router.post('/fetchProfiles', auth,  isProfileCompleted, validation.fetchProfiles, browseFilter, browseController.fetchProfiles);
 router.post('/fetchUserProfile', auth, isProfileCompleted, validation.fetchUserProfile, browseController.fetchUserProfile);
-router.post('/islike', auth, isProfileCompleted, browseController.isLike);
-router.post('/isMatch', auth, isProfileCompleted, browseController.isMatch);
+router.post('/islike', auth, isProfileCompleted, validation.validUserId, browseController.isLike);
+router.post('/isMatch', auth, isProfileCompleted, validation.validUserId, browseController.isMatch);
 router.get('/getUserMatches', auth, isProfileCompleted, browseController.getUserMatches);
 router.get('/getUserLikes', auth, isProfileCompleted, browseController.getUserlikes);
 router.get('/getUserLiked', auth, isProfileCompleted, browseController.getUserliked);
