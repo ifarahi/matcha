@@ -6,7 +6,7 @@ module.exports = (req, res, next) => {
         tags: [],
         distance: 37,
         location: null,
-        rating: [0, 4]
+        rating: [1, 4]
     }
 
     if (filter !== undefined) {

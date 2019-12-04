@@ -48,6 +48,9 @@ module.exports = {
             // apply given or default filter preferences
             profiles = await browseHelper.applyFilter({profiles, filter, latestUserProfile});
 
+            // sort by distance
+            profiles = profiles.sort((a, b) => a.distance - b.distance);
+
             responseObject.profiles = profiles;
             res.json(responseObject);
 
