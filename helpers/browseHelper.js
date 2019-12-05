@@ -131,7 +131,7 @@ module.exports = {
                     if (result.length > 0) {
                         longitude = result[0].longitude;
                         latitude = result[0].latitude;
-                        distance = 5;
+                        distance = 15;
                     }
                 }
 
