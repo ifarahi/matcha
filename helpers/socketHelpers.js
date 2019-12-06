@@ -1,18 +1,22 @@
+const { getUserMatches } =  require('../controllers/BrowseController');
+
 let connectedUsers = [];
 
 const addToConnectedUsers = ( userId, username, socketId ) => {
     let existingUser = findConnectedUser( userId );
-    if ( existingUser === null )
+    if ( existingUser === -1 )
         if ( username.length >= 3 && socketId.length >= 3 )
             connectedUsers.push( { userId, username, socketId } );
-    console.log(connectedUsers);
+    else 
+        if ( username.length >= 3 && socketId.length >= 3 )
+            connectedUsers[ existingUser ].socketId = socketId;
 }
 
 const findConnectedUser = ( userId ) => {
     for( i = 0; i < connectedUsers.length; i++ )
         if ( connectedUsers[ i ].userId === userId )
-            return connectedUsers[ i ];
-    return null;
+            return i;
+    return -1;
 }
 
 const removeConnectedUser = ( userId ) => {
@@ -27,14 +31,41 @@ const removeConnectedSocket = ( socketId ) => {
     })
 }
 
-const getConnectedUsers = () => {
-    return connectedUsers;
+const getFriendsList = async( user ) => {
+    const { id } = user;
+    let matchList = []; 
+    matchList = await getUserMatches( id );
+    const keys = Object.keys( matchList.matches );
+    const friendsList = keys.map( key => {
+        let friend = matchList.matches[ key ];
+        friend.isOnline = isUserConnected( friend.id );
+        return friend;
+    })
+
+    return friendsList;
 }
+
+const isUserConnected = ( userId ) => {
+    for ( let i = 0  ; i < connectedUsers.length; i++ ) {
+        if ( connectedUsers[ i ].userId === userId )
+            return true;
+    }
+    return false;
+}
+
+const getSocketid = ( userId ) => {
+    for ( let i = 0 ; i < connectedUsers.length ; i++ ) {
+        if ( userId === connectedUsers[ i ].userId )
+            return connectedUsers[ i ].socketId;
+    }
+    return null;
+} 
 
 module.exports = {
     addToConnectedUsers,
     findConnectedUser,
     removeConnectedUser,
     removeConnectedSocket,
-    getConnectedUsers
+    getSocketid,
+    getFriendsList
 }

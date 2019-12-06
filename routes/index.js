@@ -6,6 +6,7 @@ const   Setting = require('./Setting');
 const   Browse = require('./Browse');
 const   Privacy = require('./Privacy');
 const   Actions = require('./Actions');
+const   Chat = require('./Chat');
 /*
 **** This is the router module wich is responsable to pass controll to the right router 
 **** ex : any request start with '/users' will be handled with the users, router '/images' will be handled with images router
@@ -17,6 +18,7 @@ router.use('/setting', Setting);
 router.use('/Browse', Browse);
 router.use('/Privacy', Privacy);
 router.use('/Actions', Actions);
+router.use('/Chat', Chat);
 
 // router.use('/', ( req, res ) => {
 //     console.log('test')

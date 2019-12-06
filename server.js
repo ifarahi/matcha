@@ -4,7 +4,13 @@ const router = require('./routes');
 const cors = require('cors');
 
 const http = require('http').createServer(app);
-const io = require('socket.io')(http);
+const io = require('socket.io')(http, {
+    serveClient: false,
+    pingInterval: 100000,
+    pingTimeout: 50000,
+    cookie: false
+});
+
 const socketHandler = require('./helpers/socketHandler');
 
 
@@ -24,9 +30,42 @@ app.use((err, req, res, next) => {
 port = process.env.PORT || 3000; // if there any port number has been exported in the env will be used if not 3000 is the default
 
 io.on('connection', function( socket ){
+    // console.log(`Connected user: ${socket.id}`);
     socketHandler( io, socket );
+    // io.to( socket.id ).emit( "getFriendsList", 'tesrrrrt')
+    // io.emit('getFriendsList', 'test');
+    // socket.emit('getFriendsList', 'broadcasted response');
+    // socket.on( 'disconnect', function () {
+    //     console.log('user has disconnected' + this.id);
+    // });
 });
 
 
+// io.on('connection', function(socket){
+//     console.log('a user connected');
+//     io.to( socket.id ).emit('test', 'this is a test');
+// });
+
 
 http.listen(port, () => { console.log(`listening on port ${port} ...`) });
+
+
+
+// CREATE TABLE chat (
+//     id int PRIMARY KEY AUTO_INCREMENT,
+//     user1 int,
+//     user2 int,
+//     FOREIGN KEY (user1) REFERENCES users(id), 
+//     FOREIGN KEY (user2) REFERENCES users(id)
+// )
+
+
+// CREATE TABLE messages(
+//     id int PRIMARY KEY AUTO_INCREMENT,
+//     chat_id int, 
+//     targetId int,
+//     senderId int,
+//     message VARCHAR(500),
+//     FOREIGN KEY(chat_id) REFERENCES chat(id),
+//     deleted int DEFAULT -1
+// )

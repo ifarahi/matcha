@@ -175,22 +175,19 @@ module.exports = {
         }
     },
 
-    getUserMatches: async (req, res) => {
-        const {id} = req.decodedObject;
+    getUserMatches: async ( id ) => {
         const responseObject = {
             status: true,
             matches: []
         }
-
         try {
-
             const matchedProfiles = await browseModel.getMatchedProfiles(id);
             responseObject.matches = matchedProfiles;
-            res.json(responseObject);
+            return(responseObject);
         } catch (error) {
             responseObject.status = false;
             responseObject.message = error.message;
-            res.json(responseObject);
+            return(responseObject);
         }
     }
 }
