@@ -2,6 +2,7 @@ const geolib = require('geolib');
 const tagModel = require('../models/Tags');
 const browseModel = require('../models/Browse');
 const _ = require('lodash');
+const NodeGeocoder = require('node-geocoder');
 
 module.exports = {
     filterBlocked: (data) => {
@@ -101,8 +102,19 @@ module.exports = {
     applyFilter: (data) => {
         return new Promise( async (resolve, reject) => {
             const {profiles, filter, latestUserProfile} = data;
-            const {age, commonTags, tags, distance, rating} = filter;
-            const {latitude, longitude, tags:userTags } = latestUserProfile;
+            let {age, commonTags, tags, distance, rating, location} = filter;
+            let {latitude, longitude, tags:userTags } = latestUserProfile;
+
+            const options = {
+                provider: 'google',
+               
+                // Optional depending on the providers
+                httpAdapter: 'https', // Default
+                apiKey: process.env.GOOGLE_API_KEY, // for Mapquest, OpenCage, Google Premier
+                formatter: null         // 'gpx', 'string', ...
+            };
+
+            const geocoder = NodeGeocoder(options);
 
             try {
 
@@ -113,6 +125,15 @@ module.exports = {
                     else
                         return false;
                 });
+
+                if (location !== null) {
+                    const result = await geocoder.geocode(location);
+                    if (result.length > 0) {
+                        longitude = result[0].longitude;
+                        latitude = result[0].latitude;
+                        distance = 15;
+                    }
+                }
 
                 // filter with distance 
                 filtredList = filtredList.filter((profile) => {
@@ -139,7 +160,9 @@ module.exports = {
                 filtredList = filtredList.filter((profile) => {
                     if (tags.length > 0)
                         return _.intersection(tags, profile.tags).length == tags.length;
-                    return _.intersection(userTags, profile.tags).length >= commonTags;
+                    const fetchedCommonTagsNumber = _.intersection(userTags, profile.tags).length; // to be added on the user profile
+                    profile.commonTags = fetchedCommonTagsNumber; // added common tags number with every profile
+                    return fetchedCommonTagsNumber >= commonTags;
                 });
 
                 filtredList = filtredList.filter((profile) => profile.rating >= rating[0] && profile.rating <= rating[1]);

@@ -109,15 +109,16 @@ module.exports = {
         });
     },
 
-    getBlockedUserInfo: (id) => {
+    getBlockedListInfo: (id) => {
         return new Promise((resolve, reject) => {
-            const sql = 'SELECT * FROM users WHERE id = ?';
-            databse.query(sql, [id], (error, result) => {
+            const fields = "users.`id`, users.`firstname`, users.`lastname`, users.`username`, users.`profile_picture`";
+            const sql = `SELECT ${fields} FROM blocks JOIN users ON (user_id = ? AND blocked_id = users.id)`;
+            databse.query(sql, [ id, id ], (error, result) => {
                 if (error)
-                    return reject(error);
+                    reject(error);
                 else
-                    resolve(result[0]);
+                    resolve(result);
             });
         });
-    }
+    },
 }

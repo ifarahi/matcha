@@ -48,6 +48,9 @@ module.exports = {
             // apply given or default filter preferences
             profiles = await browseHelper.applyFilter({profiles, filter, latestUserProfile});
 
+            // sort by distance
+            profiles = profiles.sort((a, b) => a.distance - b.distance);
+
             responseObject.profiles = profiles;
             res.json(responseObject);
 
@@ -188,6 +191,62 @@ module.exports = {
             responseObject.status = false;
             responseObject.message = error.message;
             return(responseObject);
+        }
+    },
+
+    getUserlikes: async (req, res) => {
+        const {id} = req.decodedObject;
+        const responseObject = {
+            status: true,
+            likes: []
+        }
+
+        try {
+
+            const matchedProfiles = await browseModel.getProfilesLikes(id);
+            responseObject.likes = matchedProfiles;
+            res.json(responseObject);
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = error.message;
+            res.json(responseObject);
+        }
+    },
+
+    getUserliked: async (req, res) => {
+        const {id} = req.decodedObject;
+        const responseObject = {
+            status: true,
+            likes: []
+        }
+
+        try {
+
+            const matchedProfiles = await browseModel.getProfilesLiked(id);
+            responseObject.likes = matchedProfiles;
+            res.json(responseObject);
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = error.message;
+            res.json(responseObject);
+        }
+    },
+
+    fetchTags: async (req, res) => {
+        const responseObject = {
+            status: true,
+            tags: []
+        }
+
+        try {
+
+            const matchedProfiles = await browseModel.fetchTags();
+            responseObject.tags = matchedProfiles;
+            res.json(responseObject);
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = error.message;
+            res.json(responseObject);
         }
     }
 }

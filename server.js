@@ -13,7 +13,6 @@ const io = require('socket.io')(http, {
 
 const socketHandler = require('./helpers/socketHandler');
 
-
 app.use(cors());// Enables cors ( cross origin resources sharing )
 app.use(express.static('public')); // serves static assets 
 app.use(express.json()); // parse the body wich is contain a json object then pass controll the the router
