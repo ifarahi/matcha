@@ -31,8 +31,7 @@ const removeConnectedSocket = ( socketId ) => {
     })
 }
 
-const getFriendsList = async( user ) => {
-    const { id } = user;
+const getFriendsList = async( id ) => {
     let matchList = []; 
     matchList = await getUserMatches( id );
     const keys = Object.keys( matchList.matches );
