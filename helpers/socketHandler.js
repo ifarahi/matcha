@@ -1,16 +1,17 @@
 const socketHelpers = require("./socketHelpers");
-const chatController = require("../controllers/ChatController");
 const authentication = require('../helpers/authentication');
 const actionModel = require('../models/Actions');
+const chatController = require("../controllers/ChatController");
+const userController= require('../controllers/UsersController');
 
 socketHandler = async ( io, socket ) => {
-    console.log( 'a user has beeen connected');
+
     socket.on( 'join', async ( user ) => {
         const { authToken } = user;
         const resp = await authentication.verify( authToken );
         try {
             if (resp.status === true) {
-                socketHelpers.addToConnectedUsers( resp.userId, user.username, socket.id );
+                await socketHelpers.addToConnectedUsers( resp.userId, user.username, socket.id );
             }
             io.emit('connectedUserChange');
         } catch (error) {
@@ -18,20 +19,35 @@ socketHandler = async ( io, socket ) => {
         }
 
     })
-    socket.on( 'disconnect', () => {
+
+    socket.on( 'disconnect', async() => {
+        /*
+        * Check if the user exists in the list of connected users  √
+        * GET the user id using the socket id √
+        * Check if the userId exists in the db √
+        * update last logged_in field on the db to the CURRENT_TIMESTAP √
+        */
+
+        const userId = socketHelpers.getConnectedUserId( socket.id );
+        if ( userId )
+            await userController.updateLastLogged( userId );
+
         socketHelpers.removeConnectedSocket( socket.id )
         io.emit( 'connectedUserChange');
     });
+
+
     socket.on( 'getFriendsList', async ( user ) => {
         const { authToken } = user;
         const resp = await authentication.verify( authToken );
         try {
             if (resp.status === true)
-                io.to( socket.id ).emit( "getFriendsList", await socketHelpers.getFriendsList( resp.userId ));
+                socket.emit( "getFriendsList", await socketHelpers.getFriendsList( resp.userId ));
         } catch ( e ) {
 
         }
     })
+
     socket.on( 'sendNewMessage', async ( payload, callback ) => {
         const responseObject = {
             status: true,
@@ -67,6 +83,7 @@ socketHandler = async ( io, socket ) => {
             callback ( responseObject );
         }
     })
+
 }
 
 module.exports = socketHandler;

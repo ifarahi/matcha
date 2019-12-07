@@ -41,7 +41,7 @@ module.exports = {
 
     fetchProfileWithUsername: (username) => {
         return new Promise((resolve, reject) => {
-            const sql = 'SELECT f_fameRating(users.id) AS rating, TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) AS age, id, firstname, lastname, username, email, gender, birthdate, profile_picture, longitude, latitude, is_first_visit, sexual_preferences, bio FROM users WHERE username = ? ';
+            const sql = 'SELECT f_fameRating(users.id) AS rating, TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) AS age, id, firstname, lastname, username, email, gender, birthdate, profile_picture, longitude, latitude, is_first_visit, sexual_preferences, bio, last_logged FROM users WHERE username = ? ';
             const values = [username];
             database.query(sql, values, (error, result) => {
                 if (error)

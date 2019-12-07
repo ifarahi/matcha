@@ -11,7 +11,7 @@ module.exports = {
 
             database.query('SELECT count(*) as rows FROM users WHERE username = ?', username, (error, result) => {
                 if (error) reject(error);
-                resolve(result[0].rows);
+                else resolve(result[0].rows);
             });
         });
     },
@@ -21,7 +21,7 @@ module.exports = {
 
             database.query('SELECT count(*) as rows FROM users WHERE email = ?', email, (error, result) => {
                 if (error) reject(error);
-                resolve(result[0].rows);
+                else resolve(result[0].rows);
             });
         });
     },
@@ -33,7 +33,7 @@ module.exports = {
             const   values = [ firstname, lastname, username, gender, email, password, verify_email_token]; // values to be binded the first '?' will be replaced with the first element in the array and so on
             database.query(sql, values, (error, result) => {
                 if (error) reject(error);
-                resolve(result);
+                else resolve(result);
             });
         });
     },
@@ -43,7 +43,7 @@ module.exports = {
 
             database.query('SELECT count(*) as rows FROM users WHERE email = ? AND verify_email_token = ?', [data.email, data.token], (error, result) => {
                 if (error) reject(error);
-                resolve(result[0].rows);
+                else resolve(result[0].rows);
             });
         });
     },
@@ -53,7 +53,7 @@ module.exports = {
 
             database.query('UPDATE users SET is_verified = 1 WHERE email = ?', email, (error, result) => {
                 if (error) reject(error);
-                resolve(true);
+                else resolve(true);
             });
         });
     },
@@ -62,7 +62,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             database.query('SELECT * FROM users WHERE email = ?', email, (error, result) => {
                 if (error) reject(error);
-                resolve(result[0]);
+                else resolve(result[0]);
             });
         });
     },
@@ -71,7 +71,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             database.query('SELECT * FROM users WHERE id = ?', id, (error, result) => {
                 if (error) reject(error);
-                resolve(result[0]);
+                else resolve(result[0]);
             });
         });
     },
@@ -80,7 +80,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             database.query('SELECT TIMESTAMPDIFF(YEAR, birthdate, CURDATE()) AS age, id, is_verified, verify_email_token, forget_pass_token, password, firstname, lastname, username, email, gender, birthdate, profile_picture, longitude, latitude, is_first_visit, sexual_preferences, bio FROM users WHERE username = ?', username, (error, result) => {
                 if (error) reject(error);
-                resolve(result[0]);
+                else resolve(result[0]);
             });
         });
     },
@@ -89,7 +89,7 @@ module.exports = {
         return new Promise((resolve, reject) => { 
             database.query('UPDATE users SET forget_pass_token = ? WHERE email = ?',[data.token, data.email], (error, result) => {
                 if (error) reject(error);
-                resolve(true);
+                else resolve(true);
             });
         });
     },
@@ -98,7 +98,7 @@ module.exports = {
         return new Promise((resolve, reject) => { 
             database.query('UPDATE users SET forget_pass_token = 0 WHERE id = ?', id, (error, result) => {
                 if (error) reject(error);
-                resolve(true);
+                else resolve(true);
             });
         });
     },
@@ -107,7 +107,7 @@ module.exports = {
         return new Promise((resolve, reject) => { 
             database.query('SELECT count(*) as rows FROM users WHERE forget_pass_token = ?', token, (error, result) => {
                 if (error) reject(error);
-                resolve(result[0].rows);
+                else resolve(result[0].rows);
             });
         });
     },
@@ -116,7 +116,7 @@ module.exports = {
         return new Promise((resolve, reject) => { 
             database.query('SELECT * FROM users WHERE forget_pass_token = ?', token, (error, result) => {
                 if (error) reject(error);
-                resolve(result[0]);
+                else resolve(result[0]);
             });
         });
     },
@@ -125,7 +125,7 @@ module.exports = {
         return new Promise((resolve, reject) => { 
             database.query('UPDATE users SET password = ? WHERE id = ?',[data.password, data.id], (error, result) => {
                 if (error) reject(error);
-                resolve(true);
+                else resolve(true);
             });
         });
     },
@@ -137,7 +137,7 @@ module.exports = {
             const   values = [ birthdate, bio, sexual_preferences, id]; // values to be binded the first '?' will be replaced with the first element in the array and so on
             database.query(sql, values, (error, result) => {
                 if (error) reject(error);
-                resolve(true);
+                else resolve(true);
             });
         });
     },
@@ -146,7 +146,7 @@ module.exports = {
         return new Promise((resolve, reject) => { 
             database.query('INSERT INTO tags (user_id, tag) VALUES (?, ?)',[data.id, data.tag], (error, result) => {
                 if (error) reject(error);
-                resolve(true);
+                else resolve(true);
             });
         });
     },
@@ -158,7 +158,7 @@ module.exports = {
             const   values = [ firstname, lastname, username, gender, email, birthdate, bio, sexual_preferences, id]; // values to be binded the first '?' will be replaced with the first element in the array and so on
             database.query(sql, values, (error, result) => {
                 if (error) reject(error);
-                resolve(true);
+                else resolve(true);
             });
         });
     },
@@ -170,8 +170,27 @@ module.exports = {
             const   values = [verify_email_token, email]; // values to be binded the first '?' will be replaced with the first element in the array and so on
             database.query(sql, values, (error, result) => {
                 if (error) reject(error);
-                resolve(true);
+                else resolve(true);
             });
         });
-    }
+    },
+
+    updateLastLogged : ( userId ) => {
+        return new Promise( ( resolve, reject ) => { // Sets the lastlogged in date time to the current timeStamp
+            database.query("UPDATE users SET last_logged = CURRENT_TIMESTAMP WHERE id = ?", userId,
+            ( error, result ) => {
+                if ( error ) reject( error );
+                else resolve( result );
+            })
+        })
+    },
+
+    userExists : ( id ) => { // checks if the tagname is already exists
+        return new Promise( ( resolve, reject ) => { 
+            database.query('SELECT count(*) as rows FROM users WHERE id = ?', id, (error, result) => {
+                if (error) reject(error);
+                else resolve(result[0].rows);
+            });
+        });
+    },
 }

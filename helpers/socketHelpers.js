@@ -22,6 +22,7 @@ const findConnectedUser = ( userId ) => {
 const getConnectedUsers = () => {
     return connectedUsers;
 }
+
 const removeConnectedUser = ( userId ) => {
     connectedUsers = connectedUsers.filter( e => {
         return ( e.userId !== userId );
@@ -63,6 +64,14 @@ const getSocketid = ( userId ) => {
     return null;
 } 
 
+const getConnectedUserId = ( socketId ) => {
+    for ( let i = 0 ; i < connectedUsers.length ; i++ ) {
+        if ( socketId === connectedUsers[ i ].socketId )
+            return connectedUsers[ i ].userId;
+    }
+    return null;
+} 
+
 module.exports = {
     addToConnectedUsers,
     findConnectedUser,
@@ -70,5 +79,6 @@ module.exports = {
     removeConnectedSocket,
     getSocketid,
     getFriendsList,
+    getConnectedUserId,
     getConnectedUsers
 }

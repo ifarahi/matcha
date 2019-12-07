@@ -70,8 +70,7 @@ module.exports = {
         const responseObject = {
             status: true,
         }
-
-
+        
         try {
 
             // check if the user is exists

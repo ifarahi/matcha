@@ -6,7 +6,7 @@ const   random = require('../helpers/random_generator');
 const   mail   = require('../helpers/mail_sender');
 const   _      = require('lodash');
 const   jwt    = require('jsonwebtoken');
-const   tagRemover = require('../helpers/tagRemover');
+// const   tagRemover = require('../helpers/tagRemover');
 
 /*
 **** Users controller responsible for dealing with users part (register new user, login an existing user, update user information)
@@ -283,6 +283,19 @@ module.exports = {
             responseObject.status = false;
             responseObject.message = error;
             res.json(responseObject);
+        }
+    },
+
+    updateLastLogged : async ( userId ) => {
+        try {
+            if ( userId ) {
+                const result = await ( userModel.userExists( userId ) );
+                if ( result > 0 ) {       
+                    await userModel.updateLastLogged( userId );
+                }
+            }
+        } catch ( e ) {
+            console.log(e)
         }
     }
 
