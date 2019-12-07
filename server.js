@@ -3,6 +3,8 @@ const app = require('express')();
 const router = require('./routes');
 const cors = require('cors');
 
+const socketHelpers = require('./helpers/socketHelpers');
+const socketHandler = require('./helpers/socketHandler');
 const http = require('http').createServer(app);
 const io = require('socket.io')(http, {
     serveClient: false,
@@ -11,7 +13,9 @@ const io = require('socket.io')(http, {
     cookie: false
 });
 
-const socketHandler = require('./helpers/socketHandler');
+app.set('io', io);
+app.set('socketHelpers', socketHelpers);
+
 
 app.use(cors());// Enables cors ( cross origin resources sharing )
 app.use(express.static('public')); // serves static assets 

@@ -19,6 +19,9 @@ const findConnectedUser = ( userId ) => {
     return -1;
 }
 
+const getConnectedUsers = () => {
+    return connectedUsers;
+}
 const removeConnectedUser = ( userId ) => {
     connectedUsers = connectedUsers.filter( e => {
         return ( e.userId !== userId );
@@ -66,5 +69,6 @@ module.exports = {
     removeConnectedUser,
     removeConnectedSocket,
     getSocketid,
-    getFriendsList
+    getFriendsList,
+    getConnectedUsers
 }

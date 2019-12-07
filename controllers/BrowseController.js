@@ -62,6 +62,9 @@ module.exports = {
     },
 
     fetchUserProfile: async (req, res) => {
+        const io = req.app.get('io');
+        const socketHelpers = req.app.get('socketHelpers');
+
         const { username } = req.body;
         const {id:connected} = req.decodedObject;
         const responseObject = {
@@ -116,6 +119,10 @@ module.exports = {
     
                 // recored the visit history
                 await actionsModel.setAsVisited({visitor: connected, visited: userProfile.id});
+
+                const targetSocket = socketHelpers.getSocketid( userProfile.id )
+                if ( targetSocket )
+                    io.to( targetSocket ).emit("newProfileVisit", ({ username : req.decodedObject.username, action: "visit" }))
 
                 responseObject.userProfile = userProfile;
                 res.json(responseObject);
