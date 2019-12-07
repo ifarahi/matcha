@@ -3,6 +3,7 @@ const authentication = require('../helpers/authentication');
 const actionModel = require('../models/Actions');
 const chatController = require("../controllers/ChatController");
 const userController= require('../controllers/UsersController');
+const _ = require('lodash');
 
 socketHandler = async ( io, socket ) => {
 
@@ -43,6 +44,22 @@ socketHandler = async ( io, socket ) => {
         try {
             if (resp.status === true)
                 socket.emit( "getFriendsList", await socketHelpers.getFriendsList( resp.userId ));
+        } catch ( e ) {
+
+        }
+    })
+
+    socket.on( 'getOnlineList', async ( user ) => {
+        const { authToken } = user;
+        const resp = await authentication.verify( authToken );
+        try {
+            if (resp.status === true) {
+                let connectUsers = await socketHelpers.getConnectedUsers();
+                const result = connectUsers.map( Element => { 
+                    return Element.userId;
+                })
+                socket.emit( "getOnlineList", result);
+            }
         } catch ( e ) {
 
         }
