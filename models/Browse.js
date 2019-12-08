@@ -117,6 +117,18 @@ module.exports = {
         });
     },
 
+    getLastConnection: (id) => {
+        return new Promise((resolve, reject) => {
+            const sql = 'SELECT last_logged FROM users WHERE id = ?';
+            database.query(sql, id, (error, result) => {
+                if (error)
+                    return reject(error);
+                else
+                    resolve(result[0]);
+            });
+        });
+    },
+
     fetchTags: () => {
         return new Promise((resolve, reject) => {
             const sql = 'SELECT name FROM tags';

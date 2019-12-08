@@ -5,6 +5,7 @@ const actionsModel = require('../models/Actions');
 const userModel = require('../models/Users');
 const tagsModel = require('../models/Tags');
 const browseHelper = require('../helpers/browseHelper');
+const moment = require('moment');
 const fetch = require('node-fetch');
 
 module.exports = {
@@ -268,6 +269,45 @@ module.exports = {
             const matchedProfiles = await browseModel.fetchTags();
             responseObject.tags = matchedProfiles;
             res.json(responseObject);
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = error.message;
+            res.json(responseObject);
+        }
+    },
+
+    getLastConnection: async (req, res) => {
+        const {id} = req.decodedObject;
+        const {user_id} = req.body;
+        const responseObject = {
+            status: true,
+        }
+
+        try {
+    
+            // check if the connected user is already blocked the given user
+            const isUserBlocker = await privacyModel.isUserBlocker({user_id: id, blocked_id: user_id});
+
+            // check if the requested user is already blocked the connected user
+            const isUserBlocked = await privacyModel.isUserBlocker({user_id,  blocked_id: id});
+
+            // if the user is blocked or blocker end the request with a false status
+            if (isUserBlocked !== undefined || isUserBlocker !== undefined){
+                responseObject.status = false;
+                responseObject.message = 'Unauthorized information';
+                res.status(401).json(responseObject);
+                return;
+            }
+
+            const lastConnection = await browseModel.getLastConnection(user_id);
+            if (lastConnection) {
+                responseObject.lastConnection = moment(lastConnection.last_logged, 'YYYYMMDDhhmmss').fromNow();
+                res.json(responseObject);
+            } else {
+                responseObject.status = false;
+                responseObject.message = 'User does not exist!';
+                res.status(404).json(responseObject);
+            }
         } catch (error) {
             responseObject.status = false;
             responseObject.message = error.message;
