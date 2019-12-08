@@ -285,32 +285,39 @@ module.exports = {
 
         try {
     
-            // check if the connected user is already blocked the given user
-            const isUserBlocker = await privacyModel.isUserBlocker({user_id: id, blocked_id: user_id});
-
-            // check if the requested user is already blocked the connected user
-            const isUserBlocked = await privacyModel.isUserBlocker({user_id,  blocked_id: id});
-
-            // if the user is blocked or blocker end the request with a false status
-            if (isUserBlocked !== undefined || isUserBlocker !== undefined){
-                responseObject.status = false;
-                responseObject.message = 'Unauthorized information';
-                res.status(401).json(responseObject);
-                return;
-            }
-
-            const lastConnection = await browseModel.getLastConnection(user_id);
-            if (lastConnection) {
-                responseObject.lastConnection = moment(lastConnection.last_logged, 'YYYYMMDDhhmmss').fromNow();
-                res.json(responseObject);
+            if ( user_id || user_id === 0 ) {
+                // check if the connected user is already blocked the given user
+                const isUserBlocker = await privacyModel.isUserBlocker({user_id: id, blocked_id: user_id});
+    
+                // check if the requested user is already blocked the connected user
+                const isUserBlocked = await privacyModel.isUserBlocker({user_id,  blocked_id: id});
+    
+                // if the user is blocked or blocker end the request with a false status
+                if (isUserBlocked !== undefined || isUserBlocker !== undefined){
+                    responseObject.status = false;
+                    responseObject.message = 'Unauthorized information';
+                    res.status(401).json(responseObject);
+                    return;
+                }
+    
+                const lastConnection = await browseModel.getLastConnection(user_id);
+                if (lastConnection) {
+                    responseObject.lastConnection = moment(lastConnection.last_logged, 'YYYYMMDDhhmmss').add(1, 'hours').fromNow();
+                    res.json(responseObject);
+                } else {
+                    responseObject.status = false;
+                    responseObject.message = 'User does not exist!';
+                    res.status(404).json(responseObject);
+                }
             } else {
                 responseObject.status = false;
-                responseObject.message = 'User does not exist!';
+                responseObject.message = 'Invalid user_id!';
                 res.status(404).json(responseObject);
             }
+
         } catch (error) {
             responseObject.status = false;
-            responseObject.message = error.message;
+            responseObject.message = "Invalid data";
             res.json(responseObject);
         }
     }
