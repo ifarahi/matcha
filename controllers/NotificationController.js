@@ -69,6 +69,17 @@ module.exports = {
         }
     },
 
+    getUnreadMessages : async( user ) => {
+        try {
+            const res = await notificationModel.userExists( user );
+            if ( res > 0 ) {
+                return ( await notificationModel.messagesCountNew( user ) );
+            } else return ("Invalid user id")
+        } catch ( e ) {
+            return 'Something went wrong';
+        }
+    },
+
     getNotifications: async (req, res) => {
         const {id} = req.decodedObject;
         const responseObject = {
@@ -76,6 +87,21 @@ module.exports = {
         }
         try {
             responseObject.notifications = await module.exports.notificationGetNewCount( id );
+            res.status( 200 ).json( responseObject );
+        } catch ( error ) {
+            responseObject.status = false;
+            responseObject.message = `something went wrong`;
+            res.status( 400 ).json( responseObject );
+        }
+    },
+
+    getNewMessagesCount: async (req, res) => {
+        const {id} = req.decodedObject;
+        const responseObject = {
+            status: true
+        }
+        try {
+            responseObject.notifications = await module.exports.getUnreadMessages( id );
             res.status( 200 ).json( responseObject );
         } catch ( error ) {
             responseObject.status = false;

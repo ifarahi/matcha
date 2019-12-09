@@ -56,7 +56,17 @@ module.exports = {
 
     notificationCountNew : ( user ) => {
         return new Promise( ( resolve, reject ) => {
-            database.query('SELECT COUNT(*) AS COUNT FROM notification WHERE target_id = ? AND seen = 0', user,
+            database.query('SELECT COUNT(*) AS COUNT FROM notification WHERE (target_id = ? AND seen = 0) AND type != "Chat"', user,
+            ( error, result ) => {
+                if ( error ) reject ( error );
+                else resolve( result[0].COUNT );
+            });
+        });
+    },
+
+    messagesCountNew : ( user ) => {
+        return new Promise( ( resolve, reject ) => {
+            database.query('SELECT COUNT(*) AS COUNT FROM notification WHERE ? AND seen = 0 AND type = "Chat"', user,
             ( error, result ) => {
                 if ( error ) reject ( error );
                 else resolve( result[0].COUNT );
@@ -66,7 +76,17 @@ module.exports = {
 
     notificationSetSeen : ( user ) => {
         return new Promise( ( resolve, reject ) => {
-            database.query('UPDATE notification SET seen = 1 WHERE target_id = ?', user,
+            database.query('UPDATE notification SET seen = 1 WHERE target_id = ? AND type != "Chat"', user,
+            ( error, result ) => {
+                if ( error ) reject ( error );
+                else resolve( result );
+            });
+        });
+    },
+
+    mesagesSetSeen : ( user ) => {
+        return new Promise( ( resolve, reject ) => {
+            database.query('UPDATE notification SET seen = 1 WHERE target_id = ? AND type = "Chat"', user,
             ( error, result ) => {
                 if ( error ) reject ( error );
                 else resolve( result );
