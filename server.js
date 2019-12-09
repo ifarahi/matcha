@@ -78,7 +78,7 @@ http.listen(port, () => { console.log(`listening on port ${port} ...`) });
 //    user_id int,
 //    target_id int,
 //    type VARCHAR(50),
-//    seen int,
+//    seen int DEFAULT 0,
 //    `date` DATETIME DEFAULT CURRENT_TIMESTAMP,
 //    FOREIGN KEY (user_id) REFERENCES users(id),
 //    FOREIGN KEY (target_id) REFERENCES users(id) 

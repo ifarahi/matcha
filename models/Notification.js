@@ -56,10 +56,10 @@ module.exports = {
 
     notificationCountNew : ( user ) => {
         return new Promise( ( resolve, reject ) => {
-            database.query('SELECT COUNT(*) FROM notification WHERE target_id = ?', user,
+            database.query('SELECT COUNT(*) AS COUNT FROM notification WHERE target_id = ? AND seen = 0', user,
             ( error, result ) => {
                 if ( error ) reject ( error );
-                else resolve( result );
+                else resolve( result[0].COUNT );
             });
         });
     },
