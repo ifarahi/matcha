@@ -2,8 +2,12 @@ const actionsModel = require('../models/Actions');
 const privacyModel = require('../models/Privacy');
 const profileModel = require('../models/Profile');
 
+const notificationController = require('./NotificationController');
+
 module.exports = {
     likeUser: async (req, res) => {
+        const io = req.app.get('io');
+        const socketHelpers = req.app.get('socketHelpers');
         const {id:ConnectedUser} = req.decodedObject;
         const {user_id:RequestedUser} = req.body;
         const data = {
@@ -71,12 +75,15 @@ module.exports = {
 
             if (isLiker === undefined) {  // if the requested user is not already liked the connected user just set new like
                 await actionsModel.likeUser(data);
+                await notificationController.notificationAddNew( ConnectedUser, RequestedUser, 'Like', io, socketHelpers );
                 responseObject.message = 'Action has been successfuly performed';
                 res.json(responseObject);
 
             } else { // if the requested user is already liked the user set a match
                 await actionsModel.matchUsers(data);
                 await actionsModel.deleteLikeHistory(isLiker.id);
+                await notificationController.notificationAddNew( ConnectedUser, RequestedUser, 'Match', io, socketHelpers );
+                await notificationController.notificationAddNew( RequestedUser, ConnectedUser, 'Match', io, socketHelpers );
                 responseObject.isMatch = true;
                 responseObject.message = "Congratulations it's a match";
                 res.json(responseObject);
@@ -90,6 +97,9 @@ module.exports = {
     },
 
     unLikeUser: async (req, res) => {
+        const io = req.app.get('io');
+        const socketHelpers = req.app.get('socketHelpers');
+
         const {id:ConnectedUser} = req.decodedObject;
         const {user_id:RequestedUser} = req.body;
         responseObject = {
@@ -127,6 +137,7 @@ module.exports = {
             }
 
             const result = await actionsModel.unLikeUser(data);
+            await notificationController.notificationAddNew( ConnectedUser, RequestedUser, 'UnLike', io, socketHelpers );
             responseObject.message = 'Action has been successfuly performed';
             res.json(responseObject);
 
@@ -138,6 +149,8 @@ module.exports = {
     },
 
     unMatch: async (req, res) => {
+        const io = req.app.get('io');
+        const socketHelpers = req.app.get('socketHelpers');
         const {id:ConnectedUser} = req.decodedObject;
         const {user_id:RequestedUser} = req.body;
         const data = {
@@ -170,7 +183,8 @@ module.exports = {
             // check if the given user is a valid match 
             const {isMatch} = await actionsModel.isMatch(data);
             if (isMatch > 0) {
-                await actionsModel.unMatchUsers(data);
+                await actionsModel.unMatchUsers(data);                
+                await notificationController.notificationAddNew( ConnectedUser, RequestedUser, 'UnMatch', io, socketHelpers );
                 responseObject.message = 'User is successfuly deleted from you matches list';
                 res.json(responseObject);
             } else {

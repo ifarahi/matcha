@@ -8,6 +8,8 @@ const browseHelper = require('../helpers/browseHelper');
 const moment = require('moment');
 const fetch = require('node-fetch');
 
+const notificationController = require('./NotificationController');
+
 module.exports = {
     fetchProfiles: async (req, res) => {
         const {id} = req.decodedObject;
@@ -118,12 +120,9 @@ module.exports = {
                 userProfile.images = userImages.map(elm => elm.image);
     
                 // recored the visit history
-                await actionsModel.setAsVisited({visitor: connected, visited: userProfile.id});
-
-                const targetSocket = socketHelpers.getSocketid( userProfile.id )
-                if ( targetSocket )
-                    io.to( targetSocket ).emit("newProfileVisit", ({ username : req.decodedObject.username, action: "visit" }))
-
+                // await actionsModel.setAsVisited({visitor: connected, visited: userProfile.id});
+                await notificationController.notificationAddNew( connected, userProfile.id, "Visit", io, socketHelpers );
+                
                 responseObject.userProfile = userProfile;
                 res.json(responseObject);
             }
