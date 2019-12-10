@@ -120,6 +120,8 @@ module.exports = {
                 userProfile.images = userImages.map(elm => elm.image);
     
                 // recored the visit history
+                await actionsModel.setAsVisited({visitor: connected, visited: userProfile.id});
+
                 // await actionsModel.setAsVisited({visitor: connected, visited: userProfile.id});
                 await notificationController.notificationAddNew( connected, userProfile.id, "Visit", io, socketHelpers );
                 
@@ -250,6 +252,37 @@ module.exports = {
             const matchedProfiles = await browseModel.getProfilesLiked(id);
             responseObject.likes = matchedProfiles;
             res.json(responseObject);
+        } catch (error) {
+            responseObject.status = false;
+            responseObject.message = error.message;
+            res.json(responseObject);
+        }
+    },
+
+    getVisitsHistory: async (req, res) => {
+        const {id} = req.decodedObject;
+        const responseObject = {
+            status: true,
+        }
+
+        try {
+            const profiles = await browseModel.getVisitsHistory(id);
+            if (profiles.length > 0) {
+                let profilesWithTime = profiles.map((profile) => {
+                    return {
+                        ...profile,
+                        timeAgo: moment(profile.date, 'YYYYMMDDhhmmss').add(1, 'hours').fromNow(),
+                        sortTime: new Date(profile.date).getTime()
+                    }
+                });
+                profilesWithTime = profilesWithTime.sort((a, b) => b.sortTime - a.sortTime);
+                responseObject.profiles = profilesWithTime;
+                res.json(responseObject)
+            } else {
+                responseObject.profiles = [];
+                res.json(responseObject)
+            }
+
         } catch (error) {
             responseObject.status = false;
             responseObject.message = error.message;

@@ -14,6 +14,7 @@ router.get('/getUserMatches', auth, isProfileCompleted, browseController.fetchUs
 router.get('/getUserLikes', auth, isProfileCompleted, browseController.getUserlikes);
 router.get('/getUserLiked', auth, isProfileCompleted, browseController.getUserliked);
 router.get('/fetchTags', auth, isProfileCompleted, browseController.fetchTags);
+router.get('/fetchVisitsHistory', auth, isProfileCompleted, browseController.getVisitsHistory);
 router.post('/getLastConnection', auth, browseController.getLastConnection);
 
 module.exports = router;
