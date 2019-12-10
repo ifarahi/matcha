@@ -14,7 +14,7 @@ module.exports = {
                                 await notificationModel.notificationCreate( user1, user2, type );
                                 const socketId = socketHelpers.getSocketid( parseInt(user2) );
                                 if ( socketId )
-                                    io.to( socketId ).emit('newNotification');
+                                    io.to( socketId ).emit('newNotification', type);
                             } else return ("Invalid notification type");
                         } else return ("Notification type was not provided");
                     } else return ("Receiver is invalid"); 
