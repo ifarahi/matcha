@@ -66,7 +66,7 @@ module.exports = {
 
     messagesCountNew : ( user ) => {
         return new Promise( ( resolve, reject ) => {
-            database.query('SELECT COUNT(*) AS COUNT FROM notification WHERE ? AND seen = 0 AND type = "Chat"', user,
+            database.query('SELECT COUNT(*) AS COUNT FROM notification WHERE target_id = ? AND seen = 0 AND type = "Chat"', user,
             ( error, result ) => {
                 if ( error ) reject ( error );
                 else resolve( result[0].COUNT );

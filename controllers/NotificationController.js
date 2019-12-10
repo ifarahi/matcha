@@ -1,18 +1,17 @@
 const notificationModel = require('../models/Notification');
 
-
 module.exports = {
     notificationAddNew : async( user1, user2, type, io, socketHelpers ) => {
         try {
             if ( user1 !== user2 ) {
                 const res1 = await notificationModel.userExists( user1 );
-                if ( res1 > 0 ) {                  
+                if ( res1 > 0 ) {
                     const res2 = await notificationModel.userExists( user2 );
                     if ( res2 > 0 ) {
                         if ( type ) {
-                            if ( type === "Chat" || type === "Visit" || type === "Like" || type === "Match" || type === "UnLike" || type === "UnMatch" ) {
+                            if ( type === "Chat" || type === "Visit" || type === "Like" || type === "Match" || type === "UnLike" || type === "UnMatch" ) {                  
                                 await notificationModel.notificationCreate( user1, user2, type );
-                                const socketId = socketHelpers.getSocketid( parseInt(user2) );
+                                const socketId = socketHelpers.getSocketid( parseInt( user2 ) );
                                 if ( socketId )
                                     io.to( socketId ).emit('newNotification', type);
                             } else return ("Invalid notification type");

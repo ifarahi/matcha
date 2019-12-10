@@ -3,7 +3,7 @@ const authentication = require('../helpers/authentication');
 const actionModel = require('../models/Actions');
 const chatController = require("../controllers/ChatController");
 const userController= require('../controllers/UsersController');
-const _ = require('lodash');
+const notificationController = require('../controllers/NotificationController');
 
 socketHandler = async ( io, socket ) => {
 
@@ -81,7 +81,8 @@ socketHandler = async ( io, socket ) => {
                     }
                     const {isMatch} = await actionModel.isMatch(data);
                     if (isMatch > 0) {
-                        const result = await chatController.insertMessage( senderId, targetId, message );
+                        const result = await chatController.insertMessage( senderId, targetId, message, io, socketHelpers );
+                        await notificationController.notificationAddNew( senderId, targetId, "Chat", io, socketHelpers );
                         if ( result === true ) {
                             const targetSocket = socketHelpers.getSocketid( targetId );
                             responseObject.payload = payload;
@@ -95,7 +96,7 @@ socketHandler = async ( io, socket ) => {
             }
 
         } catch (error) {
-            responseObject.message = `something went wrong : ${error}`;
+            responseObject.message = `something went wrong`;
             responseObject.status = false;
             callback ( responseObject );
         }
