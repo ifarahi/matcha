@@ -66,7 +66,7 @@ socketHandler = async ( io, socket ) => {
     })
 
     socket.on('notificationChecked', ( ) => {
-        socket.emit( "newNotification");
+        socket.emit("newNotification");
     })
 
     socket.on( 'sendNewMessage', async ( payload, callback ) => {
