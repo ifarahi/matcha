@@ -69,7 +69,7 @@ module.exports = {
         const socketHelpers = req.app.get('socketHelpers');
 
         const { username } = req.body;
-        const {id:connected} = req.decodedObject;
+        const {id:connected, username:connectedUsername} = req.decodedObject;
         const responseObject = {
             status: true,
         }
@@ -119,11 +119,14 @@ module.exports = {
                 const userImages = await profileModel.getUserImages(requested);
                 userProfile.images = userImages.map(elm => elm.image);
     
-                // recored the visit history
-                await actionsModel.setAsVisited({visitor: connected, visited: userProfile.id});
+                // dont save notifications on user requested his profile
+                if (username.toLowerCase() !== connectedUsername.toLowerCase()) {
+                    // recored the visit history
+                    await actionsModel.setAsVisited({visitor: connected, visited: userProfile.id});
 
-                // await actionsModel.setAsVisited({visitor: connected, visited: userProfile.id});
-                await notificationController.notificationAddNew( connected, userProfile.id, "Visit", io, socketHelpers );
+                    // await actionsModel.setAsVisited({visitor: connected, visited: userProfile.id});
+                    await notificationController.notificationAddNew( connected, userProfile.id, "Visit", io, socketHelpers );
+                }
                 
                 responseObject.userProfile = userProfile;
                 res.json(responseObject);

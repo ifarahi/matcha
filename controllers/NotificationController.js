@@ -152,6 +152,21 @@ module.exports = {
         }
     },
 
+    setNotificaionsToSeen: async (req, res) => {
+        const { id } = req.decodedObject;
+        const responseObject = {
+            status: true
+        }
+        try {
+            responseObject.notifications = await notificationModel.notificationSetSeen( id );
+            res.status( 200 ).json( responseObject );
+        } catch ( error ) {
+            responseObject.status = false;
+            responseObject.message = `something went wrong`;
+            res.status( 400 ).json( responseObject );
+        }
+    },
+
     fetchNotificationsInfo: async (req, res) => {
         const { id } = req.decodedObject;
         const responseObject = {

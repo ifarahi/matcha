@@ -189,7 +189,7 @@ module.exports = {
     },
 
     getUserImages: async (req, res) => {
-        const {id} = req.params;
+        const {id} = req.decodedObject;
         const responseObject = {
             status: true,
             images: null
