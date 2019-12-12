@@ -14,6 +14,7 @@ router.get('/getUserMatches', auth, isProfileCompleted, browseController.fetchUs
 router.get('/getUserLikes', auth, isProfileCompleted, browseController.getUserlikes);
 router.get('/getUserLiked', auth, isProfileCompleted, browseController.getUserliked);
 router.get('/fetchTags', auth, isProfileCompleted, browseController.fetchTags);
+router.get('/fetchVisitorsHistory', auth, isProfileCompleted, browseController.getVisitorsHistory);
 router.get('/fetchVisitsHistory', auth, isProfileCompleted, browseController.getVisitsHistory);
 router.post('/getLastConnection', auth, validation.actions, browseController.getLastConnection);
 

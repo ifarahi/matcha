@@ -30,7 +30,7 @@ const validate = function (input) {
         }
     }
     if (this.isEmail === true) {
-        if (!/(.+)@(.+){2,}\.(.+){2,}/.test(input.trim()))
+        if (!/[a-z0-9-_.]{1,50}@[a-z0-9-_.]{1,50}\.[a-z0-9-_]{2,10}$/.test(input.trim()))
             return ('Invalid email adress');
         else
             return (null);

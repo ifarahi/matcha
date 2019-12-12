@@ -117,10 +117,23 @@ module.exports = {
         });
     },
 
-    getVisitsHistory: (id) => {
+    getVisitorsHistory: (id) => {
         return new Promise((resolve, reject) => {
             const fields = "users.`id`, visits.`date`, users.`firstname`, users.`lastname`, users.`username`, users.`profile_picture`";
             const sql = `SELECT ${fields} FROM visits JOIN users ON (visited = ? AND visitor = users.id)`;
+            database.query(sql, id, (error, result) => {
+                if (error)
+                    return reject(error);
+                else
+                    resolve(result);
+            });
+        });
+    },
+
+    getVisitsHistory: (id) => {
+        return new Promise((resolve, reject) => {
+            const fields = "users.`id`, visits.`date`, users.`firstname`, users.`lastname`, users.`username`, users.`profile_picture`";
+            const sql = `SELECT ${fields} FROM visits JOIN users ON (visited = users.id AND visitor = ?)`;
             database.query(sql, id, (error, result) => {
                 if (error)
                     return reject(error);
