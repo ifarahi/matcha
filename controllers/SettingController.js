@@ -26,12 +26,12 @@ module.exports = {
                 res.json(responseObject);
             } else {
                 responseObject.status = false;
-                responseObject.message = 'somthing went wrong';
+                responseObject.message = 'somthing went wrong plese enter a valid data';
                 res.json(responseObject);
             }
         } catch (error) {
             responseObject.status = false;
-            responseObject.message = `somthine went wrong ERROR: ${error}`;
+            responseObject.message = `somthine went wrong`;
             res.json(responseObject)
         }
         

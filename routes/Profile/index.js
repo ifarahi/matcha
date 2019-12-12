@@ -3,6 +3,7 @@ const   router = express.Router();
 const   userController = require('../../controllers/UsersController');
 const   validation = require('../../middleware/validation');
 const   auth = require('../../middleware/auth');
+const   authorization = require('../../middleware/authorization');
 const   cleanTag = require('../../middleware/tag_cleaner');
 const   ProfileController = require('../../controllers/ProfileController');
 const   uploadEngine = require('../../middleware/uploadImages');
@@ -15,9 +16,9 @@ router.post('/completeProfile_images', auth,
     uploadEngine.upload.single('image'),
     uploadEngine.validate,
     ProfileController.completeProfile_images);
-router.post('/setProfilePicture', auth, ProfileController.setProfilePicture);
-router.get('/getUserImages/:id', auth, ProfileController.getUserImages);
-router.post('/deleteUserImage', auth, ProfileController.deleteUserImage);
+router.post('/setProfilePicture', auth, validation.isFileName, ProfileController.setProfilePicture);
+router.get('/getUserImages/:id', auth, authorization.isProfileCompleted, ProfileController.getUserImages);
+router.post('/deleteUserImage', auth, validation.isFileName, ProfileController.deleteUserImage);
 router.post('/completeProfileTags/add', auth, tagCleaner, validation.tags, ProfileController.completeProfile_tags_add);
 router.post('/completeProfileTags/delete', auth, tagCleaner, validation.tags, ProfileController.completeProfile_tags_delete);
 router.get('/completeProfileTags/get/count', auth, ProfileController.ompleteProfile_tags_getCount);
