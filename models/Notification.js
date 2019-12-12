@@ -92,5 +92,19 @@ module.exports = {
                 else resolve( result );
             });
         });
+    },
+
+    fetchNotificationsInfo : (id) => {
+        return new Promise((resolve, reject) => {
+            const fields = 'users.`id`, type, date, users.`firstname`, users.`lastname`, users.`username`, users.`profile_picture`';
+            const sql = `SELECT ${fields} FROM notification JOIN users ON (target_id = ? AND user_id = users.id)`;
+            database.query(sql, id, (error, result) => {
+                if (error)
+                    return reject(error);
+                else
+                    resolve(result);
+            });
+        });
     }
+
 }
