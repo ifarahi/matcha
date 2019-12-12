@@ -298,6 +298,23 @@ module.exports = {
         next();
     },
 
+    isFileName: (req, res, next) => {
+        const errorObject = {
+            status: false,
+        }
+
+        const schema = {
+            image: vivo.string().required().min(10).max(255)
+        }
+
+        vivo.validate(schema, req.body)
+            .then(res => next())
+            .catch((err) => {
+                errorObject.messgae = err.details;
+                res.json(errorObject);
+            })
+    },
+
     tags: async (req, res, next) => {
         //Tags object needed for vivo validate
         const tags = {

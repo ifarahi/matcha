@@ -223,6 +223,7 @@ module.exports = {
             message: ''
         }
         try {
+            
             const result = await profileModel.userHasImage(data);
             if (result.value > 0)
             {
