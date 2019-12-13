@@ -86,7 +86,8 @@ module.exports = {
 
     completeProfile_info: (req, res, next) => {
         const   errorObject = { // init the error object wich will be returned as a response in case of error
-            status: false
+            status: false,
+            details: ''
         }
         const schema = {
             birthdate: vivo.string().birthdate().required(),
@@ -95,7 +96,16 @@ module.exports = {
         }
 
         vivo.validate(schema, req.body)
-        .then(body => next())
+        .then((body) => {
+            const {sexual_preferences} = req.body;
+            if ((sexual_preferences !== 'Men') && (sexual_preferences !== 'Women') && (sexual_preferences !== 'Other')) {
+                errorObject.details = { sexual_preferences: 'Invalid option' };
+                res.json(errorObject);
+                return;
+            } else {
+                next();
+            }
+        })
         .catch((error) => {
             errorObject.details = error.details;
             res.json(errorObject);
