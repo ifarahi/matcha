@@ -139,9 +139,25 @@ module.exports = {
         })
     },
 
-    uploadImage: (req, res, next) => {
-        
+    confirmEmail: (req, res, next) => {
+        const {email, token} = req.params;
+        const errorObject = {
+            status: false,
+        }
+
+        const schema = {
+            email: vivo.string().required().email(),
+            token: vivo.string().required().max(300)
+        }
+
+        vivo.validate(schema, req.params)
+        .then(body => next())
+        .catch((error) => {
+            errorObject.message = 'Invalid data';
+            res.json(errorObject);
+        })
     },
+
 
     changePersonalInformations: (req, res, next) => {
         const   old = req.body.decodedObject; // the old information from the user row (added by the auth middleware)

@@ -15,7 +15,7 @@ router.post('/register', validation.register, userController.register); // if th
 
 router.post('/login', validation.login, userController.login); // check if the user exist login the user
 
-router.get('/completeRegistration/:email/:token', userController.completeRegistarion); // verifying user email
+router.get('/completeRegistration/:email/:token', validation.confirmEmail, userController.completeRegistarion); // verifying user email
 
 router.get('/forgetPassword/:email', validation.forgetPassword, userController.forgetPassword); // send a recovery email to user to re-initialize account password
 
