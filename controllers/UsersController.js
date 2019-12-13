@@ -33,7 +33,7 @@ module.exports = {
         try { // if the username is already exists the process will stop here otherwise will go to the next statement
             const usernameResult = await userModel.usernameExists(username); 
             if (usernameResult) { // if username is already exists set up the response object and end the reqeust
-                responseObject.message = "Username is already exists";
+                responseObject.details = {username: "Username is already exists"};
                 res.json(responseObject);
                 return;
             }
@@ -45,7 +45,7 @@ module.exports = {
         try { // if the email is already exists the process will stop here otherwise will go to the next statement
             const emailResult = await userModel.emailExists(email);
             if (emailResult) { // if email is already exists set up the response object and end the reqeust
-                responseObject.message = "email is already exists";
+                responseObject.details = {email: "email is already exists"};
                 res.json(responseObject);
                 return;
             }
