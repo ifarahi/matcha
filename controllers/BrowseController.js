@@ -81,7 +81,8 @@ module.exports = {
             if (userExists < 1) {
                 responseObject.status = false;
                 responseObject.message = 'User does not exists';
-                res.status(404).json(responseObject);
+                responseObject.reason = 404;
+                res.json(responseObject);
 
             } else {
 
@@ -99,7 +100,8 @@ module.exports = {
                 if (isUserBlocked !== undefined || isUserBlocker !== undefined){
                     responseObject.status = false;
                     responseObject.message = 'Unauthorized page';
-                    res.status(401).json(responseObject);
+                    responseObject.reason = 401;
+                    res.json(responseObject);
                     return;
                 }
 
@@ -362,7 +364,8 @@ module.exports = {
                 if (isUserBlocked !== undefined || isUserBlocker !== undefined){
                     responseObject.status = false;
                     responseObject.message = 'Unauthorized information';
-                    res.status(401).json(responseObject);
+                    responseObject.reason = 401;
+                    res.json(responseObject);
                     return;
                 }
     
@@ -373,12 +376,11 @@ module.exports = {
                 } else {
                     responseObject.status = false;
                     responseObject.message = 'User does not exist!';
-                    res.status(404).json(responseObject);
-                }
-            } else {
-                responseObject.status = false;
-                responseObject.message = 'Invalid user_id!';
-                res.status(404).json(responseObject);
+                    responseObject.reason = 404;
+                    res.json(responseObject);
+                };
+                responseObject.reason = 404;
+                res.json(responseObject);
             }
 
         } catch (error) {
