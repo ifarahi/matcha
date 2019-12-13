@@ -160,7 +160,24 @@ module.exports = {
         }
 
         vivo.validate(schema, req.body)
-        .then(body => next())
+        .then((body) => {
+            const {sexual_preferences, gender} = req.body;
+            let error = false;
+            if ((sexual_preferences !== 'Men') && (sexual_preferences !== 'Women') && (sexual_preferences !== 'Other')) {
+                errorObject.details = { sexual_preferences: 'Invalid option' };
+                error = true;
+            }
+            if ((gender !== 'Men') && (gender !== 'Women') && (gender !== 'Other')) {
+                errorObject.details = { gender: 'Invalid option' };
+                error = true;
+            }
+            if (error === true) {
+                res.json(errorObject);
+                return;
+            } else {
+                next();
+            }
+        })
         .catch((error) => {
             errorObject.details = error.details;
             res.json(errorObject);
