@@ -25,7 +25,6 @@ const getChatId = async ( senderId, targetId, message ) => {
             else return "Oops something went wrong.";
         } else {
             const chatId = await chatModel.chatCreate( targetId, senderId );
-            console.log( " new chat room has been created  => " + chatId )
             if ( chatId )
                 return await sendMessage( chatId, targetId, senderId, message );
             else return "Oops something went wromg!";

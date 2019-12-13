@@ -10,5 +10,7 @@ router.get( '/get/messages', auth, authorization.isProfileCompleted, notificatio
 router.post( '/read/messages', auth, authorization.isProfileCompleted, notificationController.setMessagesToSeen);
 router.post( '/read/notifications', auth, authorization.isProfileCompleted, notificationController.setNotificaionsToSeen);
 router.get('/get/notificationsInfo', auth , authorization.isProfileCompleted, notificationController.fetchNotificationsInfo );
+router.post('/clear', auth , authorization.isProfileCompleted, notificationController.notificationsDelete );
+
 
 module.exports = router;

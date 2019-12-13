@@ -49,7 +49,6 @@ module.exports = {
     },
 
     forgetPassword: (req, res, next) => {
-        console.log( req )
         const   errorObject = { // init the error object wich will be returned as a response in case of error
             status: false
         }

@@ -213,6 +213,20 @@ module.exports = {
             responseObject.message = `something went wrong Error : ${error}`;
             res.json(responseObject);
         }
+    },
+
+    notificationsDelete: async ( req, res ) => {
+        const { id } = req.decodedObject;
+        try {
+            if ( id ) {
+                const result = await module.exports.notificationDeleteAll( id );
+                res.status(200).json({ status : true });
+            } else {
+                res.status(400).json({ status : false });
+            }
+        } catch (error) {
+            res.status(400).json({ status : false });
+        }
     }
 
 }
