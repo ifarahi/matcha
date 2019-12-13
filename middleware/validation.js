@@ -82,7 +82,8 @@ module.exports = {
         }
         const schema = {
             password: vivo.string().required().pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,36})/, 'your password should be at least one capital latter and one number and 8 characters length'),
-            confirmPassword: vivo.string().required().ref('password')
+            confirmPassword: vivo.string().required().ref('password'),
+            token: vivo.string().required().max(300)
         }
 
         vivo.validate(schema, req.body)
