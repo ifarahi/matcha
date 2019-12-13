@@ -25,7 +25,16 @@ module.exports = {
         }
 
         vivo.validate(schema, req.body)
-            .then(body =>  next() )
+            .then((body) => {
+                const {gender} = req.body;
+                if ((gender !== 'Men') && (gender !== 'Women') && (gender !== 'Other')) {
+                    errorObject.details = { gender: 'Invalid option' };
+                    res.json(errorObject);
+                    return;
+                } else {
+                    next();
+                }
+            })
             .catch((error) => {
                 errorObject.details = error.details;
                 res.json(errorObject);
