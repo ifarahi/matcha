@@ -19,7 +19,7 @@
   "dependencies": {
     "bcrypt": "^5.0.0",
     "canvas": "^2.6.0",
-    "config": "^3.2.2",
+    "config": "^3.3.8",
     "cors": "^2.8.5",
     "date-diff": "^0.2.1",
     "express": "^4.17.1",
